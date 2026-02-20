@@ -1,0 +1,48 @@
+{
+    "name": "@repo/database",
+    "version": "1.0.0",
+    "description": "",
+    "license": "ISC",
+    "author": "",
+    "type": "module",
+    "main": "./dist/src/index.js",
+    "types": "./dist/src/index.d.ts",
+    "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js",
+      "default": "./dist/src/index.js"
+    },
+    "./src/lib/db.js": {
+      "types": "./dist/src/lib/db.d.ts",
+      "import": "./dist/src/lib/db.js",
+      "default": "./dist/src/lib/db.js"
+    },
+    "./generated/prisma/enums.js": {
+      "types": "./dist/generated/prisma/enums.d.ts",
+      "import": "./dist/generated/prisma/enums.js",
+      "default": "./dist/generated/prisma/enums.js"
+    }
+  },
+    "scripts": {
+        "build": "prisma generate && tsc",
+        "db:format": "prisma format",
+        "db:generate": "prisma generate",
+        "db:migrate": "prisma migrate dev",
+        "db:push": "prisma db push",
+        "db:studio": "prisma studio",
+        "db:seed": "node seed.ts",
+        "lint": "eslint --max-warnings 0",
+        "check-types": "tsc --noEmit"
+    },
+    "dependencies": {
+        "@prisma/adapter-pg": "^7.4.1",
+        "@prisma/client": "^7.4.1",
+        "crypto-js": "^4.2.0",
+        "pg": "^8.18.0"
+    },
+    "devDependencies": {
+        "@types/crypto-js": "^4.2.2",
+        "prisma": "^7.4.1"
+    }
+}
