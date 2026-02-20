@@ -1,0 +1,33 @@
+{
+  "name": "chatting-app",
+  "private": true,
+  "version": "1.0",
+  "description": "A chatting app",
+  "author": "halaburdataras <taras.galaburda@outlook.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/halaburdataras/chatting-app.git"
+  },
+  "homepage": "https://github.com/halaburdataras/chatting-app",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "check-types": "turbo run check-types",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.6.0",
+    "prettier-plugin-tailwindcss": "^0.7.1",
+    "turbo": "^2.8.10"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "npm@11.6.2",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
