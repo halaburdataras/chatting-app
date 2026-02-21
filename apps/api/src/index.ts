@@ -52,7 +52,7 @@ app.get("/health", async (req, res) => {
 });
 
 // Handle preflight requests
-app.options("*", cors());
+// app.options("*", cors());
 
 // API routes
 app.use("/api/v1", apiRouter);
