@@ -5,7 +5,17 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "~lib/*": ["./lib/*"],
+      "~hooks/*": ["./hooks/*"],
+      "~constants/*": ["./constants/*"],
+      "~components/*": ["./components/*"],
+      "~providers/*": ["./providers/*"],
+      "~types/*": ["./types/*"],
+      "~icons/*": ["./assets/icons/*"]
+    }
   },
   "include": [
     "**/*.ts",
