@@ -2,7 +2,7 @@
 // Query your database using the Prisma Client
 
 import "dotenv/config";
-import { PrismaClient } from "./generated/prisma/client.js";
+import { PrismaClient, Role } from "./generated/prisma/client.js";
 import { PrismaPg } from "@prisma/adapter-pg";
 import bcrypt from "bcryptjs";
 
@@ -39,7 +39,7 @@ async function seed() {
       username: "admin",
       email: "admin@chatting-app.com",
       password: encryptedPassword,
-      role: "ADMIN",
+      role: Role.SUPER_ADMIN,
       color: "#e92a67",
       rooms: {
         create: [

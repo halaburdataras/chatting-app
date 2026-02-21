@@ -31,7 +31,7 @@
         "db:migrate": "prisma migrate dev",
         "db:push": "prisma db push",
         "db:studio": "prisma studio",
-        "db:seed": "node seed.ts",
+        "db:seed": "tsx seed.ts",
         "lint": "eslint --max-warnings 0",
         "check-types": "tsc --noEmit"
     },
