@@ -1,0 +1,12 @@
+@import 'tailwindcss';
+@import '@repo/tailwind-config';
+
+:root {
+  --body-color: #121212;
+  --body-background: #fff;
+}
+
+body {
+  color: var(--body-color);
+  background-color: var(--body-background);
+}
