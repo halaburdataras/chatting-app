@@ -6,7 +6,8 @@
     "types": "./src/index.ts",
     "exports": {
         ".": "./src/index.ts",
-        "./utils": "./src/utils/index.ts"
+        "./utils": "./src/utils/index.ts",
+        "./lib/api": "./src/lib/api/index.ts"
     },
     "scripts": {
         "lint": "eslint --max-warnings 0",

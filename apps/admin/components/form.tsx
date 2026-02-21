@@ -13,9 +13,18 @@ type FormProps = {
   btnLabel: string
   onSubmit: (data: any) => void
   className?: string
+  loading?: boolean
+  error?: string | null
 }
 
-const Form = ({ fields, btnLabel, onSubmit, className }: FormProps) => {
+const Form = ({
+  fields,
+  btnLabel,
+  onSubmit,
+  className,
+  loading,
+  error,
+}: FormProps) => {
   return (
     <RadixForm.Root
       autoComplete="off"
@@ -48,7 +57,9 @@ const Form = ({ fields, btnLabel, onSubmit, className }: FormProps) => {
       ))}
 
       <RadixForm.Submit asChild>
-        <Button className="mt-4 w-full">{btnLabel}</Button>
+        <Button className="mt-4 w-full" disabled={loading}>
+          {btnLabel}
+        </Button>
       </RadixForm.Submit>
     </RadixForm.Root>
   )

@@ -5,6 +5,7 @@ type ButtonProps = {
   onClick?: () => void
   className?: string
   variant?: 'primary' | 'secondary' | 'error'
+  disabled?: boolean
 }
 
 const Button = ({
@@ -12,6 +13,7 @@ const Button = ({
   onClick,
   className,
   variant = 'primary',
+  disabled = false,
 }: ButtonProps) => {
   return (
     <button
@@ -21,8 +23,10 @@ const Button = ({
         className,
         variant === 'primary' && 'bg-slate-900 text-white',
         variant === 'secondary' && '',
-        variant === 'error' && 'bg-red-400 text-white'
+        variant === 'error' && 'bg-red-400 text-white',
+        disabled && 'cursor-not-allowed opacity-50'
       )}
+      disabled={disabled}
     >
       {children}
     </button>
