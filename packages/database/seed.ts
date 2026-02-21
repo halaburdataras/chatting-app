@@ -25,7 +25,7 @@ async function encryptPassword(password: string) {
 
 console.log("Seeding database...");
 
-async function createAdminUser() {
+async function seed() {
   const users = await prisma.user.findMany();
   if (users.length > 0) {
     console.log("Users already seeded");
@@ -41,31 +41,17 @@ async function createAdminUser() {
       password: encryptedPassword,
       role: "ADMIN",
       color: "#e92a67",
+      rooms: {
+        create: [
+          { name: "General" },
+          { name: "Gaming" },
+          { name: "Programming" },
+        ],
+      },
     },
   });
 
   console.log("User created:", user);
-  return user;
-}
-
-async function createRooms() {
-  const rooms = await prisma.room.findMany();
-  if (rooms.length > 0) {
-    console.log("Rooms already seeded");
-    return;
-  }
-
-  const createdRooms = await prisma.room.createMany({
-    data: [{ name: "General" }, { name: "Gaming" }, { name: "Programming" }],
-  });
-
-  console.log("Rooms created:", createdRooms);
-  return createdRooms;
-}
-
-async function seed() {
-  await createAdminUser();
-  await createRooms();
 }
 
 seed()
