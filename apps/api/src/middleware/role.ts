@@ -49,6 +49,12 @@ export const adminRoleMiddleware = async (
         .json({ success: false, error: "Permission denied" });
     }
 
+    req.user = {
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+    };
+
     next();
   } catch (error) {
     return res
@@ -57,7 +63,7 @@ export const adminRoleMiddleware = async (
   }
 };
 
-const superAdminRoleMiddleware = async (
+export const superAdminRoleMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -98,6 +104,12 @@ const superAdminRoleMiddleware = async (
         .status(403)
         .json({ success: false, error: "Permission denied" });
     }
+
+    req.user = {
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+    };
 
     next();
   } catch (error) {
