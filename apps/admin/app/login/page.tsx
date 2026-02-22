@@ -1,6 +1,6 @@
 'use client'
 
-import {  login, LoginRequest } from '@repo/shared/lib/api'
+import { login, LoginRequest } from '@repo/shared/lib/api'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useState } from 'react'
 import Form from '~components/form'

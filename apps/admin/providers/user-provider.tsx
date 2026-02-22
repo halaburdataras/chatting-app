@@ -9,6 +9,7 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function UserProvider({
   children,
@@ -18,12 +19,14 @@ export default function UserProvider({
   const [user, setUser] = useState<UserModel | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const router = useRouter()
 
   const fetchUser = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
       const response = await getCurrentUser()
+      console.log(response)
       if (response.success && response.data) {
         setUser(response.data.user)
       }
@@ -38,6 +41,14 @@ export default function UserProvider({
     }
   }, [])
 
+  const logout = useCallback(async () => {
+    apiClient.removeAuthToken()
+    setUser(null)
+    setLoading(false)
+    setError(null)
+    router.push('/login')
+  }, [router])
+
   useEffect(() => {
     if (apiClient.isAuthenticated()) {
       fetchUser()
@@ -45,8 +56,17 @@ export default function UserProvider({
   }, [fetchUser])
 
   const values = useMemo(
-    () => ({ user, loading, error, setUser, setLoading, setError, fetchUser }),
-    [user, loading, error, fetchUser]
+    () => ({
+      user,
+      loading,
+      error,
+      setUser,
+      setLoading,
+      setError,
+      fetchUser,
+      logout,
+    }),
+    [user, loading, error, fetchUser, logout]
   )
 
   return <UserContext.Provider value={values}>{children}</UserContext.Provider>
@@ -60,6 +80,7 @@ const UserContext = createContext<{
   setLoading: (loading: boolean) => void
   setError: (error: string) => void
   fetchUser: () => Promise<void>
+  logout: () => Promise<void>
 }>({
   user: null,
   loading: false,
@@ -68,6 +89,7 @@ const UserContext = createContext<{
   setLoading: () => {},
   setError: () => {},
   fetchUser: async () => {},
+  logout: async () => {},
 })
 
 export function useUser() {

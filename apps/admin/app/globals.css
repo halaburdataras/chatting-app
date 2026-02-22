@@ -36,6 +36,9 @@ body {
 
 @theme {
   --text-primary: var(--color-slate-900);
+  --text-secondary: var(--color-slate-500);
+
+  --container-screen: 1440px;
 
   --animate-slideIn: slideIn 150ms cubic-bezier(0.16, 1, 0.3, 1);
   @keyframes slideIn {
@@ -64,6 +67,57 @@ body {
     }
     to {
       opacity: 0;
+    }
+  }
+
+  --animate-slideDownAndFade: slideDownAndFade 400ms
+    cubic-bezier(0.16, 1, 0.3, 1);
+  @keyframes slideDownAndFade {
+    from {
+      opacity: 0;
+      transform: translateY(-2px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  --animate-slideLeftAndFade: slideLeftAndFade 400ms
+    cubic-bezier(0.16, 1, 0.3, 1);
+  @keyframes slideLeftAndFade {
+    from {
+      opacity: 0;
+      transform: translateX(2px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  --animate-slideUpAndFade: slideUpAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  @keyframes slideUpAndFade {
+    from {
+      opacity: 0;
+      transform: translateY(2px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  --animate-slideRightAndFade: slideRightAndFade 400ms
+    cubic-bezier(0.16, 1, 0.3, 1);
+  @keyframes slideRightAndFade {
+    from {
+      opacity: 0;
+      transform: translateX(-2px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
     }
   }
 }
