@@ -61,7 +61,7 @@ usersRouter.get("/", adminRoleMiddleware, async (req, res, next) => {
     if (search) {
       where.OR = [
         { email: { contains: search, mode: "insensitive" } },
-        { name: { contains: search, mode: "insensitive" } },
+        { username: { contains: search, mode: "insensitive" } },
       ];
     }
 

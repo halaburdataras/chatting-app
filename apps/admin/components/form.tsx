@@ -68,9 +68,12 @@ const Form = ({
 type InputProps = {
   name: string
   type: string
-  required: boolean
+  required?: boolean
   className?: string
   isError?: boolean
+  placeholder?: string
+  value?: string
+  onChange?: (value: string) => void
 }
 
 const inputClassName =
@@ -78,9 +81,18 @@ const inputClassName =
 const errorInputClassName =
   'border-red-400 hover:border-red-500 focus:border-red-500 focus:ring-red-500'
 
-const Input = forwardRef(
+export const Input = forwardRef(
   (
-    { name, type, required, className, isError = false }: InputProps,
+    {
+      name,
+      type,
+      required,
+      className,
+      isError = false,
+      value,
+      onChange,
+      placeholder,
+    }: InputProps,
     ref: ForwardedRef<HTMLTextAreaElement | HTMLInputElement>
   ) => {
     if (type === 'textarea') {
@@ -90,11 +102,14 @@ const Input = forwardRef(
           ref={ref as Ref<HTMLTextAreaElement>}
           name={name}
           required={required}
+          value={value}
+          onChange={(e) => onChange?.(e.target.value)}
           className={cn(
             inputClassName,
             className,
             isError && errorInputClassName
           )}
+          placeholder={placeholder}
         />
       )
     }
@@ -106,11 +121,14 @@ const Input = forwardRef(
         type={type}
         name={name}
         required={required}
+        value={value}
+        onChange={(e) => onChange?.(e.target.value)}
         className={cn(
           inputClassName,
           className,
           isError && errorInputClassName
         )}
+        placeholder={placeholder}
       />
     )
   }

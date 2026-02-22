@@ -16,6 +16,7 @@ type DropdownProps = {
     dividerPosition?: string | 'top' | 'bottom'
   }[]
   align?: 'start' | 'center' | 'end'
+  className?: string
 }
 
 export default function Dropdown({
@@ -23,6 +24,7 @@ export default function Dropdown({
   list,
   children,
   align = 'center',
+  className,
 }: DropdownProps) {
   return (
     <DropdownMenu.Root>
@@ -30,7 +32,10 @@ export default function Dropdown({
 
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          className="data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade data-[side=right]:animate-slideLeftAndFade data-[side=top]:animate-slideDownAndFade z-[999] min-w-[220px] rounded-md bg-white p-[5px] shadow-md will-change-[opacity,transform]"
+          className={cn(
+            'data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade data-[side=right]:animate-slideLeftAndFade data-[side=top]:animate-slideDownAndFade z-[999] min-w-[220px] rounded-md bg-white p-[5px] shadow-md will-change-[opacity,transform]',
+            className
+          )}
           sideOffset={5}
           align={align}
         >
