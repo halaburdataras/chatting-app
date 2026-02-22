@@ -74,7 +74,7 @@ type InputProps = {
 }
 
 const inputClassName =
-  'transition-all duration-300 w-full border border-gray-400/20 rounded-lg px-3.5 py-4 text-sm text-primary hover:border-slate-900 focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900'
+  'transition-all duration-300 w-full border border-gray-400/20 rounded-lg px-3.5 py-4 text-sm text-slate-900 hover:border-slate-900 focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900'
 const errorInputClassName =
   'border-red-400 hover:border-red-500 focus:border-red-500 focus:ring-red-500'
 
@@ -115,5 +115,7 @@ const Input = forwardRef(
     )
   }
 )
+
+Input.displayName = 'Input'
 
 export default Form

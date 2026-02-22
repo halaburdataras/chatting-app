@@ -35,8 +35,8 @@ body {
 }
 
 @theme {
-  --text-primary: var(--color-slate-900);
-  --text-secondary: var(--color-slate-500);
+  --color-primary: var(--color-slate-900);
+  --color-secondary: var(--color-slate-500);
 
   --container-screen: 1440px;
 

@@ -31,13 +31,13 @@ export default function AccountPopover() {
           className="cursor-pointer transition-opacity duration-300 outline-none hover:opacity-80"
           aria-label="Customise options"
         >
-          <UserAvatarIcon className="text-primary size-8 min-w-8" />
+          <UserAvatarIcon className="size-8 min-w-8 text-slate-500" />
         </button>
       }
     >
       <div className="flex flex-col gap-0.5 p-3 pb-1">
         <p className="text-sm font-semibold">{user?.username}</p>
-        <p className="text-secondary text-sm">{user?.email}</p>
+        <p className="text-sm text-slate-500">{user?.email}</p>
       </div>
     </Dropdown>
   )

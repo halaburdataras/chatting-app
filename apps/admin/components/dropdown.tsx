@@ -43,7 +43,7 @@ export default function Dropdown({
                 onClick={item.onClick}
                 disabled={item.disabled}
                 className={cn(
-                  'group text-primary relative flex cursor-pointer items-center rounded-md py-1.5 pr-2 pl-3 text-sm font-medium transition-colors duration-200 select-none hover:outline-none',
+                  'group relative flex cursor-pointer items-center rounded-md py-1.5 pr-2 pl-3 text-sm font-medium text-slate-900 transition-colors duration-200 select-none hover:outline-none',
                   (!item.variant || item.variant === 'default') &&
                     'bg-transparent hover:bg-slate-400/10',
                   item.variant === 'error' &&
