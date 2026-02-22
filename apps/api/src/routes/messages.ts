@@ -120,7 +120,7 @@ messagesRouter.post("/", authMiddleware, async (req, res) => {
       },
     });
 
-    res.json({ success: true, data: message });
+    res.json({ success: true, data: { message } });
   } catch (error) {
     console.error("Create message error:", error);
     res.status(500).json({ success: false, error: "Internal server error" });
@@ -172,7 +172,7 @@ messagesRouter.delete("/:id", authMiddleware, async (req, res) => {
 
     res.json({
       success: true,
-      data: "Message deleted successfully",
+      data: { message: "Message deleted successfully" },
     });
   } catch (error) {
     console.error("Delete message error:", error);
@@ -232,7 +232,7 @@ messagesRouter.put("/:id", authMiddleware, async (req, res) => {
       data: { content, attachments },
     });
 
-    res.json({ success: true, data: message });
+    res.json({ success: true, data: { message } });
   } catch (error) {
     console.error("Update message error:", error);
     res.status(500).json({ success: false, error: "Internal server error" });

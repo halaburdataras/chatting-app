@@ -35,7 +35,7 @@ usersRouter.get("/current-user", authMiddleware, async (req, res) => {
     }
     res.json({
       success: true,
-      user,
+      data: { user },
     });
   } catch (error) {
     console.error("Get current user error:", error);
@@ -130,7 +130,7 @@ usersRouter.post("/", adminRoleMiddleware, async (req, res) => {
       },
     });
 
-    res.json({ success: true, data: user });
+    res.json({ success: true, data: { user } });
   } catch (error) {
     console.error("Create user error:", error);
     res.status(500).json({ success: false, error: "Internal server error" });
@@ -188,7 +188,7 @@ usersRouter.put("/:id", adminRoleMiddleware, async (req, res) => {
       data: { email, username, role, color },
     });
 
-    res.json({ success: true, data: user });
+    res.json({ success: true, data: { user } });
   } catch (error) {
     console.error("Update user error:", error);
     res.status(500).json({ success: false, error: "Internal server error" });

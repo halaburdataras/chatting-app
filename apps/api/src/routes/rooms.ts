@@ -84,7 +84,7 @@ roomsRouter.post("/", adminRoleMiddleware, async (req, res) => {
       data: { name, user: { connect: { id: currentUser?.userId as string } } },
     });
 
-    res.json({ success: true, data: room });
+    res.json({ success: true, data: { room } });
   } catch (error) {
     console.error("Create room error:", error);
     res.status(500).json({ success: false, error: "Internal server error" });
@@ -133,7 +133,7 @@ roomsRouter.put("/:id", adminRoleMiddleware, async (req, res) => {
       data: { name },
     });
 
-    res.json({ success: true, data: room });
+    res.json({ success: true, data: { room } });
   } catch (error) {
     console.error("Update room error:", error);
     res.status(500).json({ success: false, error: "Internal server error" });
