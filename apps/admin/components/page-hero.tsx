@@ -6,7 +6,7 @@ import Button from './button'
 type PageHeroProps = {
   title: string
   description?: string
-  breadcrumbs: {
+  breadcrumbs?: {
     label: string
     href: string
   }[]
@@ -31,7 +31,9 @@ export default function PageHero({
         {description && (
           <p className="font-medium text-slate-500">{description}</p>
         )}
-        <Breadcrumbs breadcrumbs={breadcrumbs} className="mt-2" />
+        {breadcrumbs && breadcrumbs.length > 0 && (
+          <Breadcrumbs breadcrumbs={breadcrumbs} className="mt-2" />
+        )}
       </div>
       {!!actions && actions.length > 0 && (
         <div className="flex items-center gap-2">
