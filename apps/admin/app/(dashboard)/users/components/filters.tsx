@@ -26,46 +26,71 @@ export default function Filters({
   isFiltersApplied,
   handleResetFilters,
 }: FiltersProps) {
-
-
   const handleRemoveFilter = (filter: keyof FiltersState) => {
     handleChangeFilters({ ...filters, [filter]: undefined })
   }
 
   return (
     <div>
-      <div className="p-5 grid grid-cols-[auto_1fr] justify-start items-center gap-4">
+      <div className="grid grid-cols-[auto_1fr] items-center justify-start gap-4 p-5">
         <Dropdown
           trigger={
-            <Button variant='outline' className='capitalize h-full min-w-52 justify-between'>
-              <span className={cn(filters.role ? 'text-slate-900' : '')}>{filters.role ? filters.role.toLowerCase().replaceAll('_', ' ') : 'Role'}</span>
-<ChevronDownIcon className="size-5 min-w-5" />
+            <Button
+              variant="outline"
+              className="h-full min-h-auto min-w-52 justify-between capitalize"
+            >
+              <span className={cn(filters.role ? 'text-slate-900' : '')}>
+                {filters.role
+                  ? filters.role.toLowerCase().replaceAll('_', ' ')
+                  : 'Role'}
+              </span>
+              <ChevronDownIcon className="size-5 min-w-5" />
             </Button>
           }
           list={[
-              { label: 'User', onClick: () => handleChangeFilters({ ...filters, role: Role.USER }) },
-              { label: 'Admin', onClick: () => handleChangeFilters({ ...filters, role: Role.ADMIN }) },
-              { label: 'Super Admin', onClick: () => handleChangeFilters({ ...filters, role: Role.SUPER_ADMIN }) },
+            {
+              label: 'User',
+              onClick: () =>
+                handleChangeFilters({ ...filters, role: Role.USER }),
+            },
+            {
+              label: 'Admin',
+              onClick: () =>
+                handleChangeFilters({ ...filters, role: Role.ADMIN }),
+            },
+            {
+              label: 'Super Admin',
+              onClick: () =>
+                handleChangeFilters({ ...filters, role: Role.SUPER_ADMIN }),
+            },
           ]}
         />
-          <SearchInput
-            name="users"
-            value={filters.search || ''}
-            key={filters.search}
-            onChange={(value) =>
-              handleChangeFilters({ ...filters, search: value })
-            }
-            className='w-full'
-          />
+        <SearchInput
+          name="users"
+          value={filters.search || ''}
+          key={filters.search}
+          onChange={(value) =>
+            handleChangeFilters({ ...filters, search: value })
+          }
+          className="w-full"
+        />
       </div>
 
       {isFiltersApplied && (
         <div className="flex items-center gap-2 px-5 pb-4">
           {!!filters.search && (
-            <FilterItem label="Search" value={filters.search} handleRemoveFilter={() => handleRemoveFilter('search')} />
+            <FilterItem
+              label="Search"
+              value={filters.search}
+              handleRemoveFilter={() => handleRemoveFilter('search')}
+            />
           )}
           {!!filters.role && (
-            <FilterItem label="Role" value={filters.role.toLowerCase().replaceAll('_', ' ')} handleRemoveFilter={() => handleRemoveFilter('role')} />
+            <FilterItem
+              label="Role"
+              value={filters.role.toLowerCase().replaceAll('_', ' ')}
+              handleRemoveFilter={() => handleRemoveFilter('role')}
+            />
           )}
           <Button
             variant="text-error"
@@ -80,10 +105,24 @@ export default function Filters({
   )
 }
 
-const FilterItem = ({ label, value, handleRemoveFilter }: { label: string; value: string; handleRemoveFilter: () => void }) => {
+const FilterItem = ({
+  label,
+  value,
+  handleRemoveFilter,
+}: {
+  label: string
+  value: string
+  handleRemoveFilter: () => void
+}) => {
   return (
     <span className="flex items-center gap-2 rounded-md border border-dashed border-slate-800/40 p-2 text-sm">
-      {label}: <Tag className="flex items-center gap-1">{value} <Button variant="text" onClick={handleRemoveFilter}><XCircleIcon className="size-4 min-w-4 text-white" /></Button></Tag>
+      {label}:{' '}
+      <Tag className="flex items-center gap-1">
+        {value}{' '}
+        <Button variant="text" onClick={handleRemoveFilter}>
+          <XCircleIcon className="size-4 min-w-4 text-white" />
+        </Button>
+      </Tag>
     </span>
   )
 }

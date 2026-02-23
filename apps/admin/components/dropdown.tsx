@@ -7,7 +7,7 @@ import { DropdownMenu } from 'radix-ui'
 type DropdownProps = {
   trigger: React.ReactNode
   children?: React.ReactNode
-  list: {
+  list?: {
     label: string
     onClick: () => void
     variant?: string | 'default' | 'error'
@@ -41,7 +41,7 @@ export default function Dropdown({
         >
           {children}
 
-          {list.map((item) => (
+          {list?.map((item) => (
             <React.Fragment key={item.label}>
               {item.dividerPosition === 'top' && <Separator />}
               <DropdownMenu.Item

@@ -3,9 +3,24 @@
 import { login, LoginRequest } from '@repo/shared/lib/api'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useState } from 'react'
-import Form from '~components/form'
+import { z } from 'zod'
+import Form, { FormField, FormSubmit } from '~components/form'
 import { setAuthToken } from '~lib/auth'
+import { useToast } from '~providers/toast-provider'
 import { useUser } from '~providers/user-provider'
+import { ToastType } from '~types/index'
+
+const loginSchema = z.object({
+  email: z.string().min(1, 'Email is required').email('Invalid email'),
+  password: z.string().min(1, 'Password is required'),
+})
+
+type LoginFormValues = z.infer<typeof loginSchema>
+
+const defaultValues: LoginFormValues = {
+  email: '',
+  password: '',
+}
 
 const FIELDS = [
   {
@@ -32,7 +47,7 @@ export default function LoginPage() {
 
 const LoginForm = () => {
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const {showToast} = useToast()
   const searchParams = useSearchParams()
   const { fetchUser } = useUser()
   const router = useRouter()
@@ -48,11 +63,7 @@ const LoginForm = () => {
         try {
           await fetchUser()
         } catch (error) {
-          setError(
-            error instanceof Error
-              ? error.message
-              : 'An error occurred while fetching user'
-          )
+          showToast(error instanceof Error ? error.message : 'An error occurred while fetching user', ToastType.ERROR)
         }
 
         // Redirect to original page or home
@@ -60,10 +71,10 @@ const LoginForm = () => {
         router.push(redirect)
         router.refresh()
       } else {
-        setError(response.error || 'Login failed')
-      }
+      showToast(response.error || 'Login failed', ToastType.ERROR)
+    }
     } catch (err) {
-      setError('An error occurred during login')
+      showToast('An error occurred during login', ToastType.ERROR)
       console.error('Login error:', err)
     } finally {
       setLoading(false)
@@ -76,12 +87,17 @@ const LoginForm = () => {
         Sign in to chatting app admin
       </h1>
       <Form
-        fields={FIELDS}
-        btnLabel="Sign in"
+        schema={loginSchema}
+        defaultValues={defaultValues}
         onSubmit={handleSubmit}
-        loading={loading}
-        error={error}
-      />
+      >
+        {FIELDS.map((field) => (
+          <FormField key={field.name} {...field} />
+        ))}
+        <FormSubmit className="mt-4 w-full" loading={loading}>
+          Sign in
+        </FormSubmit>
+      </Form>
     </main>
   )
 }

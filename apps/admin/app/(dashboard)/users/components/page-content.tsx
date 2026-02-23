@@ -18,7 +18,8 @@ import { useToast } from '~providers/toast-provider'
 import { useUser } from '~providers/user-provider'
 import { ToastType } from '~types/index'
 import Filters from './filters'
-import TrashIcon from '~icons/trash.svg'
+import PageHero from '~components/page-hero'
+import PlusIcon from '~icons/plus.svg'
 
 const TAG_COLORS: Record<Role, 'info' | 'warning' | 'error'> = {
   [Role.USER]: 'info',
@@ -208,13 +209,23 @@ export default function PageContent() {
 
   return (
     <Container as="main" className="py-10">
-      <div>
-        <div>
-          <h1>Users</h1>
-        </div>
-      </div>
+      <PageHero
+        title="Users"
+        description="Manage your users"
+        breadcrumbs={[
+          { label: 'Dashboard', href: '/' },
+          { label: 'Users', href: '/users' },
+        ]}
+        actions={[
+          {
+            label: 'Add User',
+            icon: <PlusIcon className="size-5 min-w-5" />,
+            href: '/users/add',
+          },
+        ]}
+      />
 
-      <div className="overflow-hidden rounded-lg shadow-md mt-10">
+      <div className="mt-10 overflow-hidden rounded-lg shadow-[0_0_2px_0_rgba(145,158,171,0.2),0_12px_24px_-4px_rgba(145,158,171,0.12)]">
         <Filters
           filters={filters}
           handleChangeFilters={handleChangeFilters}

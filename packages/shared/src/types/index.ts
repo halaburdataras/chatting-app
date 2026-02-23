@@ -18,6 +18,14 @@ export interface UserModel {
   updatedAt: Date;
 }
 
+export interface CreateUserModel {
+  email: string;
+  username: string;
+  password: string;
+  role: Role;
+  color: string;
+}
+
 export type MessageModel = {
   id: string;
   content: string | null;

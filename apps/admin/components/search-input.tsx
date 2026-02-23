@@ -20,8 +20,8 @@ export default function SearchInput({
   const [search, setSearch] = useState(value)
   const debouncedSearch = useDebounce(search)
 
-  const handleChange = (newValue: string) => {
-    setSearch(newValue)
+  const handleChange = (e: any) => {
+    setSearch(e.target.value)
   }
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export default function SearchInput({
   }, [debouncedSearch])
 
   return (
-    <div className={cn("relative flex items-center", className)}>
+    <div className={cn('relative flex items-center', className)}>
       <SearchIcon className="pointer-events-none absolute left-3 size-6 min-w-6 text-slate-400" />
       <Input
         name={`search-${name}`}

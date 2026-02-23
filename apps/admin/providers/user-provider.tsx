@@ -26,7 +26,6 @@ export default function UserProvider({
     setError(null)
     try {
       const response = await getCurrentUser()
-      console.log(response)
       if (response.success && response.data) {
         setUser(response.data.user)
       }

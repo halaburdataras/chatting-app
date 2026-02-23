@@ -1,6 +1,7 @@
 import { Role } from "@repo/database/generated/prisma/enums.js";
 import {
   ApiResponse,
+  CreateUserModel,
   PaginatedResponse,
   PaginationParams,
   UserModel,
@@ -36,6 +37,20 @@ export async function getPaginatedUsers({
   return apiClient.get<PaginatedResponse<UserModel>>(
     `/api/v1/users?${queryParams.toString()}`,
   );
+}
+
+export async function createUser({
+  data,
+}: {
+  data: CreateUserModel;
+}): Promise<ApiResponse<{ user: UserModel }>> {
+  return apiClient.post<{ user: UserModel }>(`/api/v1/users`, {
+    email: data.email,
+    username: data.username,
+    password: data.password,
+    role: data.role,
+    color: data.color,
+  });
 }
 
 export async function deleteUser({

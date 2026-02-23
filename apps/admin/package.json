@@ -11,13 +11,17 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@repo/ui": "*",
+    "@hookform/resolvers": "^5.2.2",
     "@repo/shared": "*",
+    "@repo/ui": "*",
+    "@uiw/react-color-sketch": "^2.9.5",
     "next": "16.1.5",
     "radix-ui": "^1.4.3",
     "react": "^19.2.0",
     "react-dom": "^19.1.0",
-    "tailwindcss": "^4.1.5"
+    "react-hook-form": "^7.71.2",
+    "tailwindcss": "^4.1.5",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^15.4.6",
