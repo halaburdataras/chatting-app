@@ -139,7 +139,7 @@ export default function PageContent() {
         schema={addUserSchema}
         defaultValues={defaultValues}
         onSubmit={handleSubmit}
-        className={cn('w-full')}
+        className={cn('mt-4 w-full')}
       >
         <PageSection title="User information">
           {INFO_FIELDS.map((field) => (

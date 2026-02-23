@@ -35,9 +35,9 @@ export default function usePaginatedUsers({
 
       if (response.success && response.data) {
         setUsers(response.data.items)
+        setTotalPages(response.data.totalPages)
         if (!total) {
           setTotal(response.data.total)
-          setTotalPages(response.data.totalPages)
         }
       }
     } catch (error) {

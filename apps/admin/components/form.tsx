@@ -44,7 +44,7 @@ export function Form<T extends FieldValues>({
     <FormProvider {...methods}>
       <RadixForm.Root
         autoComplete="off"
-        className={cn('w-[260px]', className)}
+        className={cn('grid w-[260px]', className)}
         onSubmit={methods.handleSubmit(onSubmit as (data: T) => void)}
       >
         {children}
@@ -315,13 +315,24 @@ export function FormSubmit({
   return (
     <RadixForm.Submit asChild>
       <Button className={className} disabled={disabled || loading}>
-        {loading ? (
-          <span className="relative flex items-center justify-center">
-            <LoadingIcon className="absolute h-4 w-4 animate-spin" />
+        <span className="relative">
+          <span
+            className={cn(
+              'transition-opacity duration-200',
+              loading && 'opacity-0'
+            )}
+          >
+            {children}
           </span>
-        ) : (
-          children
-        )}
+          <span
+            className={cn(
+              'absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200',
+              loading && 'opacity-100'
+            )}
+          >
+            <LoadingIcon className="h-4 w-4 animate-spin" />
+          </span>
+        </span>
       </Button>
     </RadixForm.Submit>
   )

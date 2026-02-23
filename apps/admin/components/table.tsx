@@ -114,6 +114,7 @@ export default function Table<T extends object>({
                     variant="icon"
                     disabled={!footerData.hasPreviousPage}
                     aria-label="Previous page"
+                    onClick={footerData.handlePreviousPage}
                   >
                     <ChevronDownIcon className="size-6 min-w-6 rotate-90" />
                   </Button>
@@ -121,6 +122,7 @@ export default function Table<T extends object>({
                     variant="icon"
                     disabled={!footerData.hasNextPage}
                     aria-label="Next page"
+                    onClick={footerData.handleNextPage}
                   >
                     <ChevronDownIcon className="size-6 min-w-6 rotate-270" />
                   </Button>

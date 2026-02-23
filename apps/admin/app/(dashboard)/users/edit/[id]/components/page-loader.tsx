@@ -16,7 +16,7 @@ export default function PageLoader({ id }: { id: string }) {
         ]}
       />
 
-      <PageSection title="User information">
+      <PageSection title="User information" className="mt-10">
         {Array.from({ length: 3 }).map((_, index) => (
           <FormFieldSkeleton key={index} />
         ))}
