@@ -1,26 +1,17 @@
 'use client'
 
-import { Role } from '@repo/database/generated/prisma/enums.js'
-import { UserModel } from '@repo/shared'
-import { getPaginatedUsers } from '@repo/shared/lib/api'
+import { RoomModel } from '@repo/shared'
+import { getPaginatedRooms } from '@repo/shared/lib/api'
 import { useEffect, useState, useCallback, useMemo } from 'react'
 
-interface UsePaginatedUsersProps {
+interface UsePaginatedRoomsProps {
   limit?: number
-  initialFilters?: {
-    search?: string
-    role?: Role
-  }
 }
 
-export default function usePaginatedUsers({
+export default function usePaginatedRooms({
   limit = 10,
-  initialFilters = {
-    search: '',
-    role: undefined,
-  },
-}: UsePaginatedUsersProps) {
-  const [users, setUsers] = useState<UserModel[]>([])
+}: UsePaginatedRoomsProps) {
+  const [rooms, setRooms] = useState<RoomModel[]>([])
   const [total, setTotal] = useState<number>(0)
   const [loading, setLoading] = useState<boolean>(true)
   const [page, setPage] = useState<number>(1)
@@ -28,21 +19,19 @@ export default function usePaginatedUsers({
   const [totalPages, setTotalPages] = useState<number>(0)
   const [filters, setFilters] = useState<{
     search?: string
-    role?: Role
-  }>({ ...initialFilters })
+  }>({})
 
-  const fetchUsers = useCallback(async () => {
+  const fetchRooms = useCallback(async () => {
     setLoading(true)
     try {
-      const response = await getPaginatedUsers({
+      const response = await getPaginatedRooms({
         page,
         pageSize,
         search: filters.search,
-        role: filters.role,
       })
 
       if (response.success && response.data) {
-        setUsers(response.data.items)
+        setRooms(response.data.items)
         setTotalPages(response.data.totalPages)
         if (!total) {
           setTotal(response.data.total)
@@ -62,13 +51,10 @@ export default function usePaginatedUsers({
     setPage(1)
   }, [])
 
-  const handleChangeFilters = useCallback(
-    (newFilters: { search?: string; role?: Role }) => {
-      setFilters(newFilters)
-      setPage(1)
-    },
-    []
-  )
+  const handleChangeFilters = useCallback((newFilters: { search?: string }) => {
+    setFilters(newFilters)
+    setPage(1)
+  }, [])
 
   const handleResetFilters = useCallback(() => {
     setFilters({})
@@ -98,11 +84,11 @@ export default function usePaginatedUsers({
   }, [])
 
   useEffect(() => {
-    fetchUsers()
-  }, [fetchUsers])
+    fetchRooms()
+  }, [fetchRooms])
 
   return {
-    users,
+    rooms,
     total,
     page,
     pageSize,
@@ -117,6 +103,6 @@ export default function usePaginatedUsers({
     handleChangeLimit,
     handleNextPage,
     handlePreviousPage,
-    fetchUsers,
+    fetchRooms,
   }
 }

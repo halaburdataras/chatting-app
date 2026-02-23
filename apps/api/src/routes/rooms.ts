@@ -42,6 +42,13 @@ roomsRouter.get("/", authMiddleware, async (req, res) => {
           name: true,
           createdAt: true,
           updatedAt: true,
+          user: {
+            select: {
+              id: true,
+              username: true,
+              color: true,
+            },
+          },
         },
       }),
       prisma.room.count({ where }),
@@ -64,6 +71,29 @@ roomsRouter.get("/", authMiddleware, async (req, res) => {
     res.json(response);
   } catch (error) {
     console.error("Get rooms error:", error);
+    res.status(500).json({ success: false, error: "Internal server error" });
+  }
+});
+
+roomsRouter.get("/:id", authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Room ID is required" });
+    }
+
+    const room = await prisma.room.findUnique({ where: { id: id as string } });
+
+    if (!room) {
+      return res.status(404).json({ success: false, error: "Room not found" });
+    }
+
+    res.json({ success: true, data: { room } });
+  } catch (error) {
+    console.error("Get room error:", error);
     res.status(500).json({ success: false, error: "Internal server error" });
   }
 });

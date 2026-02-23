@@ -1,8 +1,8 @@
 'use client'
 
 import { Role } from '@repo/database/generated/prisma/enums.js'
-import { UserModel } from '@repo/shared'
-import { deleteUser } from '@repo/shared/lib/api'
+import { RoomModel, UserModel } from '@repo/shared'
+import { deleteRoom, deleteUser } from '@repo/shared/lib/api'
 import { ColumnDef } from '@tanstack/react-table'
 import { useRouter } from 'next/navigation'
 import { useMemo } from 'react'
@@ -20,29 +20,20 @@ import { ToastType } from '~types/index'
 import Filters from './filters'
 import PageHero from '~components/page-hero'
 import PlusIcon from '~icons/plus.svg'
-
-const TAG_COLORS: Record<Role, 'info' | 'warning' | 'error'> = {
-  [Role.USER]: 'info',
-  [Role.ADMIN]: 'warning',
-  [Role.SUPER_ADMIN]: 'error',
-}
+import usePaginatedRooms from '~hooks/use-paginated-rooms'
+import Link from 'next/link'
 
 const COL_SKELETONS = [
   {
-    header: 'Username',
-    accessorKey: 'username',
+    header: 'Name',
+    accessorKey: 'name',
     cell: () => <Skeleton className="w-1/2" />,
   },
   {
-    header: 'Email',
-    accessorKey: 'email',
-    cell: () => <Skeleton className="w-1/2" />,
-  },
-  {
-    header: 'Role',
-    accessorKey: 'role',
+    header: 'Created By',
+    accessorKey: 'createdBy',
     size: 100,
-    cell: () => <Skeleton className="h-6 w-1/2 rounded-md bg-blue-300" />,
+    cell: () => <Skeleton className="w-1/2" />,
   },
   {
     header: 'Created At',
@@ -62,15 +53,11 @@ const COL_SKELETONS = [
   },
 ]
 
-interface PageContentProps {
-  username?: string
-}
-
-export default function PageContent({ username }: PageContentProps) {
+export default function PageContent() {
   const { user } = useUser()
   const { showToast } = useToast()
   const {
-    users,
+    rooms,
     page,
     pageSize,
     totalPages,
@@ -84,44 +71,35 @@ export default function PageContent({ username }: PageContentProps) {
     handlePreviousPage,
     handleChangeFilters,
     handleResetFilters,
-    fetchUsers,
-  } = usePaginatedUsers({ limit: 10, initialFilters: { search: username } })
+    fetchRooms,
+  } = usePaginatedRooms({ limit: 10 })
   const router = useRouter()
 
   const columns = useMemo(
-    (): ColumnDef<UserModel>[] => [
+    (): ColumnDef<RoomModel>[] => [
       {
-        header: 'Username',
-        accessorKey: 'username',
+        header: 'Name',
+        accessorKey: 'name',
         cell: ({ row }) => (
           <div className="flex">
             {' '}
-            <span className="min-w-0 flex-1 truncate">
-              {row.original.username}
-            </span>
+            <span className="min-w-0 flex-1 truncate">{row.original.name}</span>
           </div>
         ),
       },
       {
-        header: 'Email',
-        accessorKey: 'email',
-        cell: ({ row }) => (
-          <div className="flex">
-            {' '}
-            <span className="min-w-0 flex-1 truncate">
-              {row.original.email}
-            </span>
-          </div>
-        ),
-      },
-      {
-        header: 'Role',
-        accessorKey: 'role',
+        header: 'Created By',
+        accessorKey: 'createdBy',
         size: 100,
         cell: ({ row }) => (
-          <Tag variant={TAG_COLORS[row.original.role]} className="capitalize">
-            {row.original.role.toLowerCase().replaceAll('_', ' ')}
-          </Tag>
+          <div className="flex">
+            <Link
+              href={`/users?username=${row.original.user.username}`}
+              className="min-w-0 flex-1 truncate font-medium text-slate-900 underline transition-colors duration-200 hover:text-slate-900/70"
+            >
+              {row.original.user.username}
+            </Link>
+          </div>
         ),
       },
       {
@@ -136,47 +114,47 @@ export default function PageContent({ username }: PageContentProps) {
         accessorKey: 'actions',
         size: 68,
         cell: ({ row }) => {
-          const isCurrentUser = row.original.id === user?.id
-
           const handleEdit = () => {
             if (
-              row.original.role === Role.SUPER_ADMIN &&
-              user?.role !== Role.SUPER_ADMIN
+              user?.role !== Role.SUPER_ADMIN &&
+              row.original.userId !== user?.id
             ) {
               showToast(
-                'Only super admins can edit super admin accounts',
+                'You are not allowed to edit this room',
                 ToastType.ERROR
               )
               return
             }
 
-            router.push(`/users/edit/${row.original.id}`)
+            router.push(`/rooms/edit/${row.original.id}`)
           }
 
           const handleDelete = async () => {
-            if (user?.role !== Role.SUPER_ADMIN) {
-              showToast('Only super admins can delete users', ToastType.ERROR)
-              return
-            }
-            if (isCurrentUser) {
-              showToast('You cannot delete your own account', ToastType.ERROR)
+            if (
+              user?.role !== Role.SUPER_ADMIN &&
+              row.original.userId !== user?.id
+            ) {
+              showToast(
+                'You are not allowed to delete this room',
+                ToastType.ERROR
+              )
               return
             }
 
             try {
-              const response = await deleteUser({ id: row.original.id })
+              const response = await deleteRoom({ id: row.original.id })
               if (response.success) {
-                showToast('User deleted successfully', ToastType.SUCCESS)
-                await fetchUsers()
+                showToast('Room deleted successfully', ToastType.SUCCESS)
+                await fetchRooms()
               } else {
                 showToast(
-                  response.error || 'Failed to delete user',
+                  response.error || 'Failed to delete room',
                   ToastType.ERROR
                 )
               }
             } catch (error) {
               console.error(error)
-              showToast('Failed to delete user', ToastType.ERROR)
+              showToast('Failed to delete room', ToastType.ERROR)
             }
           }
 
@@ -196,10 +174,15 @@ export default function PageContent({ username }: PageContentProps) {
                     onClick: handleEdit,
                   },
                   {
+                    label: 'Export messages to CSV',
+                    onClick: () => {
+                      console.log('TODO: Export messages to CSV')
+                    },
+                  },
+                  {
                     label: 'Delete',
                     onClick: handleDelete,
                     variant: 'error',
-                    disabled: isCurrentUser,
                   },
                 ]}
               ></Dropdown>
@@ -208,23 +191,23 @@ export default function PageContent({ username }: PageContentProps) {
         },
       },
     ],
-    [user, router, showToast, fetchUsers]
+    [user, router, showToast, fetchRooms]
   )
 
   return (
     <Container as="main" className="py-10">
       <PageHero
-        title="Users"
-        description="Manage your users"
+        title="Rooms"
+        description="Manage your rooms"
         breadcrumbs={[
           { label: 'Dashboard', href: '/' },
-          { label: 'Users', href: '/users' },
+          { label: 'Rooms', href: '/rooms' },
         ]}
         actions={[
           {
-            label: 'Add User',
+            label: 'Add Room',
             icon: <PlusIcon className="size-5 min-w-5" />,
-            href: '/users/add',
+            href: '/rooms/add',
           },
         ]}
       />
@@ -242,8 +225,8 @@ export default function PageContent({ username }: PageContentProps) {
             loading
               ? (Array.from({ length: pageSize }).map((_, index) => ({
                   id: index.toString(),
-                })) as UserModel[])
-              : users
+                })) as RoomModel[])
+              : rooms
           }
           columns={loading ? COL_SKELETONS : columns}
           footerData={{

@@ -47,4 +47,14 @@ export interface RoomModel {
   createdAt: Date;
   updatedAt: Date;
   messages: MessageModel[];
+  userId: string;
+  user: Pick<UserModel, "id" | "username" | "color">;
+}
+
+export interface CreateRoomModel {
+  name: string;
+}
+
+export interface UpdateRoomModel {
+  name: string;
 }
