@@ -94,6 +94,35 @@ usersRouter.get("/", adminRoleMiddleware, async (req, res, next) => {
   }
 });
 
+usersRouter.get("/:id", adminRoleMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        error: "User ID is required",
+      });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: id as string },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found",
+      });
+    }
+
+    res.json({ success: true, data: { user } });
+  } catch (error) {
+    console.error("Get user error:", error);
+    res.status(500).json({ success: false, error: "Internal server error" });
+  }
+});
+
 usersRouter.post("/", adminRoleMiddleware, async (req, res) => {
   try {
     const { email, username, password, role, color } = req.body;
