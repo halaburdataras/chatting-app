@@ -1,7 +1,8 @@
 'use client'
 
 import { Role } from '@repo/database/generated/prisma/enums.js'
-import { createUser } from '@repo/shared/lib/api'
+import { createUser, updateUser } from '@repo/shared/lib/api'
+import { UserModel } from '@repo/shared'
 import { cn } from '@repo/shared/utils'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -11,26 +12,16 @@ import { Form, FormField, FormSubmit } from '~components/form'
 import PageHero from '~components/page-hero'
 import PageSection from '~components/page-section'
 import { useToast } from '~providers/toast-provider'
-import { useUser } from '~providers/user-provider'
 import { ToastType } from '~types/index'
+import { useUser } from '~providers/user-provider'
 
-const addUserSchema = z.object({
+const editUserSchema = z.object({
   'user-username': z.string().min(1, 'Username is required'),
   'user-role': z.nativeEnum(Role, { required_error: 'Role is required' }),
   'user-color': z.string().min(1, 'Color is required'),
-  'user-email': z.string().min(1, 'Email is required').email('Invalid email'),
-  'user-password': z.string().min(8, 'Password must be at least 8 characters'),
 })
 
-type AddUserFormValues = z.infer<typeof addUserSchema>
-
-const defaultValues: AddUserFormValues = {
-  'user-username': '',
-  'user-role': Role.USER,
-  'user-color': '#000000',
-  'user-email': '',
-  'user-password': '',
-}
+type EditUserFormValues = z.infer<typeof editUserSchema>
 
 const INFO_FIELDS = [
   {
@@ -61,35 +52,28 @@ const INFO_FIELDS = [
   },
 ]
 
-const CREDENTIALS_FIELDS = [
-  {
-    name: 'user-email',
-    label: 'Email',
-    type: 'email',
-    placeholder: 'Enter email',
-    required: true,
-  },
-  {
-    name: 'user-password',
-    label: 'Password',
-    type: 'password',
-    placeholder: 'Enter password',
-    required: true,
-  },
-]
+type PageContentProps = {
+  user: UserModel | null
+}
 
-export default function PageContent() {
-  const { user } = useUser()
+export default function PageContent({ user }: PageContentProps) {
+  const { user: currentUser } = useUser()
   const { showToast } = useToast()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
 
-  const handleSubmit = async (data: AddUserFormValues) => {
+  const defaultValues: EditUserFormValues = {
+    'user-username': user?.username || '',
+    'user-role': user?.role || Role.USER,
+    'user-color': user?.color || '#000000',
+  }
+
+  const handleSubmit = async (data: EditUserFormValues) => {
     setLoading(true)
     try {
       if (
         data['user-role'] === Role.SUPER_ADMIN &&
-        user?.role !== Role.SUPER_ADMIN
+        currentUser?.role !== Role.SUPER_ADMIN
       ) {
         showToast(
           'Only super admins can create super admin accounts',
@@ -98,11 +82,10 @@ export default function PageContent() {
         return
       }
 
-      const response = await createUser({
+      const response = await updateUser({
+        id: user?.id || '',
         data: {
-          email: data['user-email'],
           username: data['user-username'],
-          password: data['user-password'],
           role: data['user-role'],
           color: data['user-color'],
         },
@@ -126,17 +109,17 @@ export default function PageContent() {
   return (
     <Container as="main" className="py-10">
       <PageHero
-        title="Add new user"
-        description="Add a new user to the system"
+        title="Edit user"
+        description="Edit the user's information"
         breadcrumbs={[
           { label: 'Dashboard', href: '/' },
           { label: 'Users', href: '/users' },
-          { label: 'Add User', href: '/users/add' },
+          { label: 'Edit User', href: `/users/edit/${user?.id || ''}` },
         ]}
       />
 
-      <Form<AddUserFormValues>
-        schema={addUserSchema}
+      <Form<EditUserFormValues>
+        schema={editUserSchema}
         defaultValues={defaultValues}
         onSubmit={handleSubmit}
         className={cn('w-full')}
@@ -146,14 +129,9 @@ export default function PageContent() {
             <FormField key={field.name} {...field} />
           ))}
         </PageSection>
-        <PageSection title="User credentials">
-          {CREDENTIALS_FIELDS.map((field) => (
-            <FormField key={field.name} {...field} />
-          ))}
-        </PageSection>
 
         <FormSubmit className="mt-4 ml-auto" loading={loading}>
-          Create User
+          Update User
         </FormSubmit>
       </Form>
     </Container>

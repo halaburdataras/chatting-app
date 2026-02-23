@@ -26,6 +26,12 @@ export interface CreateUserModel {
   color: string;
 }
 
+export interface UpdateUserModel {
+  username: string;
+  role: Role;
+  color: string;
+}
+
 export type MessageModel = {
   id: string;
   content: string | null;

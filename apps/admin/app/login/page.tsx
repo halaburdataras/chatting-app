@@ -47,7 +47,7 @@ export default function LoginPage() {
 
 const LoginForm = () => {
   const [loading, setLoading] = useState(false)
-  const {showToast} = useToast()
+  const { showToast } = useToast()
   const searchParams = useSearchParams()
   const { fetchUser } = useUser()
   const router = useRouter()
@@ -63,7 +63,12 @@ const LoginForm = () => {
         try {
           await fetchUser()
         } catch (error) {
-          showToast(error instanceof Error ? error.message : 'An error occurred while fetching user', ToastType.ERROR)
+          showToast(
+            error instanceof Error
+              ? error.message
+              : 'An error occurred while fetching user',
+            ToastType.ERROR
+          )
         }
 
         // Redirect to original page or home
@@ -71,8 +76,8 @@ const LoginForm = () => {
         router.push(redirect)
         router.refresh()
       } else {
-      showToast(response.error || 'Login failed', ToastType.ERROR)
-    }
+        showToast(response.error || 'Login failed', ToastType.ERROR)
+      }
     } catch (err) {
       showToast('An error occurred during login', ToastType.ERROR)
       console.error('Login error:', err)

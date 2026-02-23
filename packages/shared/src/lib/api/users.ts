@@ -4,6 +4,7 @@ import {
   CreateUserModel,
   PaginatedResponse,
   PaginationParams,
+  UpdateUserModel,
   UserModel,
 } from "../../types";
 import { apiClient } from "./client";
@@ -66,7 +67,7 @@ export async function updateUser({
   data,
 }: {
   id: string;
-  data: UserModel;
+  data: UpdateUserModel;
 }): Promise<ApiResponse<{ user: UserModel }>> {
   return apiClient.put<{ user: UserModel }>(`/api/v1/users/${id}`, data);
 }
@@ -75,6 +76,6 @@ export async function getUser({
   id,
 }: {
   id: string;
-}): Promise<ApiResponse<UserModel>> {
-  return apiClient.get<UserModel>(`/api/v1/users/${id}`);
+}): Promise<ApiResponse<{ user: UserModel }>> {
+  return apiClient.get<{ user: UserModel }>(`/api/v1/users/${id}`);
 }
