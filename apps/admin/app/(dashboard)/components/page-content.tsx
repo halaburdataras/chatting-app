@@ -9,6 +9,9 @@ import ChartGradientRedIcon from '~icons/chart-gradient-red.svg'
 import PercentageUpIcon from '~icons/percentage-up.svg'
 import PercentageDownIcon from '~icons/percentage-down.svg'
 import CupCircleIcon from '~icons/cup-circle.svg'
+import { useMemo } from 'react'
+import LineChart from '~components/charts/line'
+import MessagesIcon from '~icons/messages.svg'
 
 export default function PageContent() {
   const { user } = useUser()
@@ -49,6 +52,60 @@ export default function PageContent() {
     },
   ]
 
+  const chartData = useMemo(() => {
+    const labels = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+    ]
+    const data = {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Room 1',
+          data: [1900, 2200, 1950, 2120, 1500, 1700, 2000],
+          fill: false,
+          borderColor: '#4ade80',
+          tension: 0.1,
+        },
+        {
+          label: 'Room 2',
+          data: [1200, 1000, 1700, 1300, 1300, 1200, 1500],
+          fill: false,
+          borderColor: '#93c5fd',
+          tension: 0.1,
+        },
+        {
+          label: 'Room 3',
+          data: [1100, 1300, 1000, 1200, 1000, 1100, 1000],
+          fill: false,
+          borderColor: '#d8b4fe',
+          tension: 0.1,
+        },
+        {
+          label: 'Room 4',
+          data: [900, 1000, 1100, 1000, 1000, 900, 1000],
+          fill: false,
+          borderColor: '#fda4af',
+          tension: 0.1,
+        },
+        {
+          label: 'Room 5',
+          data: [700, 800, 900, 800, 800, 700, 800],
+          fill: false,
+          borderColor: '#fdba74',
+          tension: 0.1,
+        },
+      ],
+    }
+
+    return data
+  }, [])
+
   return (
     <Container as="main" className="py-10">
       <PageHero
@@ -63,22 +120,27 @@ export default function PageContent() {
       </section>
 
       <section className="mt-6 rounded-lg p-6 shadow-[0_0_2px_0_rgba(145,158,171,0.2),0_12px_24px_-4px_rgba(145,158,171,0.12)]">
-        <h2>Most popular rooms</h2>
-        <ol className="mt-4 list-none p-0">
+        <h2 className="text-lg font-bold">Most popular rooms</h2>
+        <p className="font-medium text-gray-500">By monthly sent messages</p>
+        <div >
+
+        <LineChart data={chartData} className="w-full h-48 mt-4" />
+        {/* <ol className="mt-4 list-none p-0 grid gap-4 content-start">
           {topPerformingRooms.map((room) => (
             <li
               key={room.name}
               className="group flex items-center justify-between gap-4"
             >
               <span className="grid">
-                {room.name}
-                {room.value}
+                <span className="text-sm font-semibold">{room.name}</span>
+                <span className='flex items-center gap-2'><MessagesIcon className="size-4 min-w-4 text-gray-500" /> <span className="text-sm text-gray-500"> {room.value}</span></span>
               </span>
 
               <CupCircleIcon className="size-10 min-w-10 text-gray-400 group-first-of-type:text-amber-300 group-last-of-type:text-amber-600" />
             </li>
           ))}
-        </ol>
+        </ol> */}
+          </div>
       </section>
     </Container>
   )
