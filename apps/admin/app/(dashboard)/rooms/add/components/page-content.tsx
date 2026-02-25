@@ -5,12 +5,12 @@ import { cn } from '@repo/shared/utils'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { z } from 'zod'
-import Container from '~components/container'
-import { Form, FormField, FormSubmit } from '~components/form'
+import Container from '@repo/ui/components/container'
+import { Form, FormField, FormSubmit } from '@repo/ui/components/form'
 import PageHero from '~components/page-hero'
 import PageSection from '~components/page-section'
-import { useToast } from '~providers/toast-provider'
-import { ToastType } from '~types/index'
+import { useToast } from '@repo/ui/providers/toast-provider'
+import { ToastType } from '@repo/ui/types/index'
 
 const addRoomSchema = z.object({
   'room-name': z.string().min(1, 'Room name is required'),

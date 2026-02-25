@@ -2,8 +2,8 @@ import '@repo/ui/styles.css'
 import './globals.css'
 import type { Metadata } from 'next'
 import { Geist } from 'next/font/google'
-import { ToastProvider } from '~providers/toast-provider'
-import UserProvider from '~providers/user-provider'
+import { ToastProvider } from '@repo/ui/providers/toast-provider'
+import UserProvider from '@repo/ui/providers/user-provider'
 
 const geist = Geist({ subsets: ['latin'] })
 

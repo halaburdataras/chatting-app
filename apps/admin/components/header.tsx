@@ -1,5 +1,5 @@
 import AccountPopover from './account-popover'
-import Container from './container'
+import Container from '@repo/ui/components/container'
 import Menu from './Menu'
 
 import DashboardIcon from '~icons/dashboard.svg'

@@ -4,5 +4,11 @@
     "outDir": "dist"
   },
   "include": ["src"],
+  "paths": {
+    "~components/*": ["./src/components/*"],
+    "~icons/*": ["./src/icons/*"],
+    "~providers/*": ["./src/providers/*"],
+    "~types/*": ["./src/types/*"]
+  },
   "exclude": ["dist", "build", "node_modules"]
 }

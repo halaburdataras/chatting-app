@@ -1,9 +1,9 @@
 import { Role } from '@repo/database/generated/prisma/enums.js'
-import Button from '~components/button'
+import Button from '@repo/ui/components/button'
 import SearchInput from '~components/search-input'
 import Tag from '~components/tag'
 import TrashIcon from '~icons/trash.svg'
-import XCircleIcon from '~icons/x-circle.svg'
+import XCircleIcon from '@repo/ui/icons/IconXCircle'
 
 type FiltersState = {
   search?: string

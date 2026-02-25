@@ -14,9 +14,9 @@ import {
 import { ForwardedRef, forwardRef, Ref } from 'react'
 import Sketch from '@uiw/react-color-sketch'
 import type { z } from 'zod'
+import IconLoading from '../icons/IconLoading'
 import Button from './button'
 import Dropdown from './dropdown'
-import LoadingIcon from '~icons/loading.svg'
 
 type FormProps<T extends FieldValues> = {
   schema: z.ZodType<T>
@@ -330,7 +330,7 @@ export function FormSubmit({
               loading && 'opacity-100'
             )}
           >
-            <LoadingIcon className="h-4 w-4 animate-spin" />
+            <IconLoading className="h-4 w-4 animate-spin" />
           </span>
         </span>
       </Button>

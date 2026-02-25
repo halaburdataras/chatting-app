@@ -4,8 +4,8 @@ import { getRoom } from '@repo/shared/lib/api'
 import PageContent from './components/page-content'
 import React, { useEffect, useState } from 'react'
 import { RoomModel } from '@repo/shared'
-import { useToast } from '~providers/toast-provider'
-import { ToastType } from '~types/index'
+import { useToast } from '@repo/ui/providers/toast-provider'
+import { ToastType } from '@repo/ui/types/index'
 import PageLoader from './components/page-loader'
 
 type EditRoomPageProps = {

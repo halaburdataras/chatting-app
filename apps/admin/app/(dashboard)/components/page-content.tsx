@@ -1,17 +1,15 @@
 'use client'
 
-import Container from '~components/container'
+import Container from '@repo/ui/components/container'
 import PageHero from '~components/page-hero'
-import { useUser } from '~providers/user-provider'
+import { useUser } from '@repo/ui/providers/user-provider'
 import ChartGradientGreenIcon from '~icons/chart-gradient-green.svg'
 import ChartGradientBlueIcon from '~icons/chart-gradient-blue.svg'
 import ChartGradientRedIcon from '~icons/chart-gradient-red.svg'
 import PercentageUpIcon from '~icons/percentage-up.svg'
 import PercentageDownIcon from '~icons/percentage-down.svg'
-import CupCircleIcon from '~icons/cup-circle.svg'
 import { useMemo } from 'react'
 import LineChart from '~components/charts/line'
-import MessagesIcon from '~icons/messages.svg'
 
 export default function PageContent() {
   const { user } = useUser()

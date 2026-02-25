@@ -5,9 +5,9 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import Button from './button'
+import Button from '@repo/ui/components/button'
 import ChevronDownIcon from '~icons/chevron-down.svg'
-import Dropdown from './dropdown'
+import Dropdown from '@repo/ui/components/dropdown'
 
 interface TableProps<T extends object> {
   data: T[]

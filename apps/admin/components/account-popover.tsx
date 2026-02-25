@@ -2,8 +2,8 @@
 
 import { useMemo } from 'react'
 import UserAvatarIcon from '~icons/user-avatar.svg'
-import { useUser } from '~providers/user-provider'
-import Dropdown from './dropdown'
+import { useUser } from '@repo/ui/providers/user-provider'
+import Dropdown from '@repo/ui/components/dropdown'
 
 export default function AccountPopover() {
   const { logout, user } = useUser()

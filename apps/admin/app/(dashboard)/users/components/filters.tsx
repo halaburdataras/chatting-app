@@ -1,10 +1,10 @@
 import { Role } from '@repo/database/generated/prisma/enums.js'
-import Button from '~components/button'
+import Button from '@repo/ui/components/button'
 import SearchInput from '~components/search-input'
 import Tag from '~components/tag'
 import TrashIcon from '~icons/trash.svg'
-import XCircleIcon from '~icons/x-circle.svg'
-import Dropdown from '~components/dropdown'
+import XCircleIcon from '@repo/ui/icons/IconXCircle'
+import Dropdown from '@repo/ui/components/dropdown'
 import ChevronDownIcon from '~icons/chevron-down.svg'
 import { cn } from '@repo/shared/utils'
 

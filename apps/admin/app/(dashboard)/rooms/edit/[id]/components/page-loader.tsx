@@ -1,7 +1,7 @@
-import Container from '~components/container'
+import Container from '@repo/ui/components/container'
 import PageHero from '~components/page-hero'
 import PageSection from '~components/page-section'
-import Skeleton from '~components/skeleton'
+import Skeleton from '@repo/ui/components/skeleton'
 
 export default function PageLoader({ id }: { id: string }) {
   return (

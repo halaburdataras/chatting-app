@@ -1,7 +1,7 @@
 'use client'
 
 import Breadcrumbs from './breadcrumbs'
-import Button from './button'
+import Button from '@repo/ui/components/button'
 
 type PageHeroProps = {
   title: string

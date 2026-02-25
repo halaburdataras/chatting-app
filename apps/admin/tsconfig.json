@@ -22,7 +22,9 @@
     "**/*.tsx",
     "next-env.d.ts",
     "next.config.ts",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "../../packages/ui/src/components/skeleton.tsx",
+    "../../packages/ui/src/components/container.tsx"
   ],
   "exclude": ["node_modules"]
 }

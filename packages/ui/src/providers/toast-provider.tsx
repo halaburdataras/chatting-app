@@ -4,17 +4,18 @@ import * as Toast from '@radix-ui/react-toast'
 import { cn } from '@repo/shared/utils'
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { createContext, useContext } from 'react'
-import XIcon from '~icons/x.svg'
-import ErrorIcon from '~icons/error-rect.svg'
-import SuccessIcon from '~icons/success-rect.svg'
-import InfoRectIcon from '~icons/info-rect.svg'
-import { ToastType } from '~types/index'
+
+import { ToastType } from '../types'
+import IconXCircle from '../icons/IconXCircle'
+import IconErrorRect from '../icons/IconErrorRect'
+import IconSuccessRect from '../icons/IconSuccessRect'
+import IconInfoRect from '../icons/IconInfoRect'
 
 const iconMap = {
-  [ToastType.ERROR]: <ErrorIcon className="size-6 min-w-6" />,
-  [ToastType.SUCCESS]: <SuccessIcon className="size-6 min-w-6" />,
-  [ToastType.INFO]: <InfoRectIcon className="size-6 min-w-6" />,
-  [ToastType.WARNING]: <InfoRectIcon className="size-6 min-w-6" />,
+  [ToastType.ERROR]: <IconErrorRect className="size-6 min-w-6" />,
+  [ToastType.SUCCESS]: <IconSuccessRect className="size-6 min-w-6" />,
+  [ToastType.INFO]: <IconInfoRect className="size-6 min-w-6" />,
+  [ToastType.WARNING]: <IconInfoRect className="size-6 min-w-6" />,
 }
 
 interface ToastContextType {
@@ -81,7 +82,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
           </Toast.Description>
           <Toast.Action className="[grid-area:_action]" asChild altText="Close">
             <button>
-              <XIcon className="size-6 max-w-6" />
+              <IconXCircle className="size-6 max-w-6" />
             </button>
           </Toast.Action>
         </Toast.Root>

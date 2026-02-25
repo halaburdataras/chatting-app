@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Input } from './form'
-import useDebounce from '~hooks/use-debounce'
+import { Input } from '@repo/ui/components/form'
+import useDebounce from '@repo/ui/hooks/use-debounce'
 import SearchIcon from '~icons/search.svg'
 import { cn } from '@repo/shared/utils'
 

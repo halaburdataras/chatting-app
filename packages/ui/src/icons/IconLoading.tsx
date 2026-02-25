@@ -1,5 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-    <path fill-rule="evenodd"
+export default function IconLoading({...rest}: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" {...rest}>
+    <path fillRule="evenodd"
         d="M12 1a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0V2a1 1 0 0 1 1-1M6.5 2.47a1 1 0 0 1 1.37.37l1 1.73a1 1 0 1 1-1.74 1l-1-1.73a1 1 0 0 1 .37-1.37m11 0a1 1 0 0 1 .37 1.37l-1 1.73a1 1 0 1 1-1.74-1l1-1.73a1 1 0 0 1 1.37-.37M2.47 6.5a1 1 0 0 1 1.37-.37l1.73 1a1 1 0 1 1-1 1.74l-1.73-1a1 1 0 0 1-.37-1.37m19.06 0a1 1 0 0 1-.37 1.37l-1.73 1a1 1 0 1 1-1-1.74l1.73-1a1 1 0 0 1 1.37.37M1 12a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2H2a1 1 0 0 1-1-1m18 0a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2h-2a1 1 0 0 1-1-1M5.94 15.5a1 1 0 0 1-.37 1.37l-1.73 1a1 1 0 1 1-1-1.74l1.73-1a1 1 0 0 1 1.37.37m12.12 0a1 1 0 0 1 1.37-.37l1.73 1a1 1 0 1 1-1 1.74l-1.73-1a1 1 0 0 1-.37-1.37M8.5 18.06a1 1 0 0 1 .37 1.37l-1 1.73a1 1 0 1 1-1.74-1l1-1.73a1 1 0 0 1 1.37-.37m7 0a1 1 0 0 1 1.37.37l1 1.73a1 1 0 1 1-1.74 1l-1-1.73a1 1 0 0 1 .37-1.37M12 19a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1"
-        clip-rule="evenodd" />
+        clipRule="evenodd" />
 </svg>
+  )
+}
