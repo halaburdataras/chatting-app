@@ -9,6 +9,7 @@ import { setAuthToken } from '@repo/ui/lib/auth'
 import { useToast } from '@repo/ui/providers/toast-provider'
 import { useUser } from '@repo/ui/providers/user-provider'
 import { ToastType } from '@repo/ui/types/index'
+import { Role } from '@repo/database/generated/prisma/enums.js'
 
 const loginSchema = z.object({
   email: z.string().min(1, 'Email is required').email('Invalid email'),
@@ -45,6 +46,8 @@ export default function LoginPage() {
   )
 }
 
+const ALLOWED_ROLES: Role[] = [Role.ADMIN, Role.SUPER_ADMIN];
+
 const LoginForm = () => {
   const [loading, setLoading] = useState(false)
   const { showToast } = useToast()
@@ -58,6 +61,12 @@ const LoginForm = () => {
       const response = await login(data)
 
       if (response.success && response.data) {
+
+        if(!ALLOWED_ROLES.includes(response.data.user.role as Role)) {
+          showToast('You have no permission to access this application', ToastType.ERROR)
+          return
+        }
+
         setAuthToken(response.data.token)
 
         try {

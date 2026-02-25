@@ -7,8 +7,8 @@ import UserProvider from '@repo/ui/providers/user-provider'
 const geist = Geist({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Chatting App Admin',
-  description: 'Configure your chatting app',
+  title: 'Chatting App',
+  description: 'Talk with your friends',
 }
 
 export default function RootLayout({

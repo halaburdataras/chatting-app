@@ -35,20 +35,20 @@ export default function PageContent() {
     },
   ]
 
-  const topPerformingRooms = [
-    {
-      name: 'Room 1',
-      value: 2000,
-    },
-    {
-      name: 'Room 2',
-      value: 1500,
-    },
-    {
-      name: 'Room 3',
-      value: 1000,
-    },
-  ]
+  // const topPerformingRooms = [
+  //   {
+  //     name: 'Room 1',
+  //     value: 2000,
+  //   },
+  //   {
+  //     name: 'Room 2',
+  //     value: 1500,
+  //   },
+  //   {
+  //     name: 'Room 3',
+  //     value: 1000,
+  //   },
+  // ]
 
   const chartData = useMemo(() => {
     const labels = [

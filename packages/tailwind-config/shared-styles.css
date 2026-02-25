@@ -33,7 +33,7 @@ body {
   background: rgba(77, 77, 77, 0.3);
 }
 
-@theme {
+@theme static {
   --color-primary: var(--color-slate-900);
   --color-secondary: var(--color-slate-500);
 
