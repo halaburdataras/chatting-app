@@ -1,8 +1,8 @@
-'use client'
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { cn } from '@repo/shared/utils'
-import { Form as RadixForm } from 'radix-ui'
+import { zodResolver } from "@hookform/resolvers/zod";
+import { cn } from "@repo/shared/utils";
+import { Form as RadixForm } from "radix-ui";
 import {
   Controller,
   DefaultValues,
@@ -10,21 +10,21 @@ import {
   FormProvider,
   useForm,
   useFormContext,
-} from 'react-hook-form'
-import { ForwardedRef, forwardRef, Ref } from 'react'
-import Sketch from '@uiw/react-color-sketch'
-import type { z } from 'zod'
-import IconLoading from '../icons/IconLoading'
-import Button from './button'
-import Dropdown from './dropdown'
+} from "react-hook-form";
+import { ForwardedRef, forwardRef, Ref } from "react";
+import Sketch from "@uiw/react-color-sketch";
+import type { z } from "zod";
+import IconLoading from "../icons/IconLoading";
+import Button from "./button";
+import Dropdown from "./dropdown";
 
 type FormProps<T extends FieldValues> = {
-  schema: z.ZodType<T>
-  defaultValues: DefaultValues<T>
-  onSubmit: (data: T) => void
-  className?: string
-  children: React.ReactNode
-}
+  schema: z.ZodType<T>;
+  defaultValues: DefaultValues<T>;
+  onSubmit: (data: T) => void;
+  className?: string;
+  children: React.ReactNode;
+};
 
 export function Form<T extends FieldValues>({
   schema,
@@ -35,33 +35,33 @@ export function Form<T extends FieldValues>({
 }: FormProps<T>) {
   const methods = useForm<T>({
     resolver: zodResolver(
-      schema as never
-    ) as import('react-hook-form').Resolver<T>,
+      schema as never,
+    ) as import("react-hook-form").Resolver<T>,
     defaultValues,
-  })
+  });
 
   return (
     <FormProvider {...methods}>
       <RadixForm.Root
         autoComplete="off"
-        className={cn('grid w-[260px]', className)}
+        className={cn("grid w-[260px]", className)}
         onSubmit={methods.handleSubmit(onSubmit as (data: T) => void)}
       >
         {children}
       </RadixForm.Root>
     </FormProvider>
-  )
+  );
 }
 
 export type FormFieldConfig = {
-  name: string
-  label: string
-  type: string
-  required: boolean
-  className?: string
-  placeholder?: string
-  options?: { label: string; value: string }[]
-}
+  name: string;
+  label: string;
+  type: string;
+  required: boolean;
+  className?: string;
+  placeholder?: string;
+  options?: { label: string; value: string }[];
+};
 
 export function FormField({
   name,
@@ -75,13 +75,13 @@ export function FormField({
   const {
     control,
     formState: { errors },
-  } = useFormContext()
+  } = useFormContext();
 
-  const errorMessage = errors[name]?.message as string | undefined
+  const errorMessage = errors[name]?.message as string | undefined;
 
   return (
     <RadixForm.Field
-      className={cn('grid not-first-of-type:mt-3', className)}
+      className={cn("grid not-first-of-type:mt-3", className)}
       name={name}
     >
       <RadixForm.Label className="text-base font-medium">
@@ -99,12 +99,12 @@ export function FormField({
               className="mt-1"
               placeholder={placeholder}
               options={options}
-              value={field.value ?? ''}
+              value={field.value ?? ""}
               onChange={(e) =>
                 field.onChange(
-                  typeof e === 'string'
+                  typeof e === "string"
                     ? e
-                    : ((e?.target as HTMLInputElement)?.value ?? e)
+                    : ((e?.target as HTMLInputElement)?.value ?? e),
                 )
               }
               onBlur={field.onBlur}
@@ -119,29 +119,30 @@ export function FormField({
         </RadixForm.Message>
       )}
     </RadixForm.Field>
-  )
+  );
 }
 
 type InputProps = {
-  name: string
-  type: string
-  required?: boolean
-  className?: string
-  isError?: boolean
-  placeholder?: string
-  value?: string
-  id?: string
+  name: string;
+  type: string;
+  required?: boolean;
+  className?: string;
+  isError?: boolean;
+  placeholder?: string;
+  value?: string;
+  id?: string;
   onChange?: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string
-  ) => void
-  onBlur?: () => void
-  options?: { label: string; value: string }[]
-}
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string,
+  ) => void;
+  onBlur?: () => void;
+  options?: { label: string; value: string }[];
+  textareaProps?: React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+};
 
 const inputClassName =
-  'transition-all duration-300 w-full border border-gray-400/20 rounded-lg px-3.5 py-4 text-sm text-slate-900 hover:border-slate-900 focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900'
+  "transition-all duration-300 w-full border border-gray-400/20 rounded-lg px-3.5 py-4 text-sm text-slate-900 hover:border-slate-900 focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900";
 const errorInputClassName =
-  'border-red-400 hover:border-red-500 focus:border-red-500 focus:ring-red-500'
+  "border-red-400 hover:border-red-500 focus:border-red-500 focus:ring-red-500";
 
 export const Input = forwardRef(
   (
@@ -157,12 +158,13 @@ export const Input = forwardRef(
       placeholder,
       options,
       id,
+      textareaProps,
     }: InputProps,
-    ref: ForwardedRef<HTMLTextAreaElement | HTMLInputElement>
+    ref: ForwardedRef<HTMLTextAreaElement | HTMLInputElement>,
   ) => {
     const sharedProps = {
       id,
-      autoComplete: 'off',
+      autoComplete: "off",
       ref: ref as Ref<HTMLTextAreaElement | HTMLInputElement>,
       name,
       required,
@@ -170,12 +172,12 @@ export const Input = forwardRef(
       onChange,
       onBlur,
       placeholder,
-    }
+    };
 
-    if (type === 'select' && options) {
+    if (type === "select" && options) {
       const currentLabel =
         options.find((o) => o.value === value)?.label ??
-        (value || placeholder || 'Select')
+        (value || placeholder || "Select");
       return (
         <Dropdown
           trigger={
@@ -183,8 +185,8 @@ export const Input = forwardRef(
               type="button"
               variant="outline"
               className={cn(
-                'min-h-13.5 w-full justify-between text-sm font-medium',
-                !!value && 'text-slate-900'
+                "min-h-13.5 w-full justify-between text-sm font-medium",
+                !!value && "text-slate-900",
               )}
             >
               {currentLabel}
@@ -195,10 +197,10 @@ export const Input = forwardRef(
             onClick: () => onChange?.(option.value),
           }))}
         />
-      )
+      );
     }
 
-    if (type === 'color') {
+    if (type === "color") {
       return (
         <div className="flex w-full items-center justify-between">
           <Dropdown
@@ -207,19 +209,19 @@ export const Input = forwardRef(
               <Button
                 variant="icon"
                 className={cn(
-                  'min-h-13.5 min-w-13.5 text-sm font-medium',
-                  !!value && 'text-slate-900'
+                  "min-h-13.5 min-w-13.5 text-sm font-medium",
+                  !!value && "text-slate-900",
                 )}
               >
                 <span
                   className="aspect-square h-full w-full rounded-full bg-slate-900"
-                  style={{ backgroundColor: value || '#0f172b' }}
+                  style={{ backgroundColor: value || "#0f172b" }}
                 />
               </Button>
             }
           >
             <ColorPicker
-              value={value || ''}
+              value={value || ""}
               onChange={onChange as (color: string) => void}
             />
           </Dropdown>
@@ -229,28 +231,29 @@ export const Input = forwardRef(
             className="text-sm font-medium"
             onClick={() =>
               onChange?.(
-                `#${(Math.floor(Math.random() * 0xffffff) | 0x0f0f0f).toString(16)}`
+                `#${(Math.floor(Math.random() * 0xffffff) | 0x0f0f0f).toString(16)}`,
               )
             }
           >
             Randomize Color
           </Button>
         </div>
-      )
+      );
     }
 
-    if (type === 'textarea') {
+    if (type === "textarea") {
       return (
         // @ts-expect-error - ref is not typed
         <textarea
           {...sharedProps}
+          {...textareaProps}
           className={cn(
             inputClassName,
             className,
-            isError && errorInputClassName
+            isError && errorInputClassName,
           )}
         />
-      )
+      );
     }
 
     return (
@@ -261,30 +264,30 @@ export const Input = forwardRef(
         className={cn(
           inputClassName,
           className,
-          isError && errorInputClassName
+          isError && errorInputClassName,
         )}
       />
-    )
-  }
-)
+    );
+  },
+);
 
-Input.displayName = 'Input'
+Input.displayName = "Input";
 
 const PRESET_COLORS = [
-  '#D0021B',
-  '#F5A623',
-  '#f8e61b',
-  '#8B572A',
-  '#7ED321',
-  '#417505',
-  '#BD10E0',
-  '#9013FE',
-]
+  "#D0021B",
+  "#F5A623",
+  "#f8e61b",
+  "#8B572A",
+  "#7ED321",
+  "#417505",
+  "#BD10E0",
+  "#9013FE",
+];
 
 type ColorPickerProps = {
-  value: string
-  onChange: (color: string) => void
-}
+  value: string;
+  onChange: (color: string) => void;
+};
 
 export const ColorPicker = ({ value, onChange }: ColorPickerProps) => {
   return (
@@ -294,17 +297,17 @@ export const ColorPicker = ({ value, onChange }: ColorPickerProps) => {
       presetColors={PRESET_COLORS}
       onChange={(color) => onChange(color.hex)}
     />
-  )
-}
+  );
+};
 
-ColorPicker.displayName = 'ColorPicker'
+ColorPicker.displayName = "ColorPicker";
 
 type FormSubmitProps = {
-  children: React.ReactNode
-  className?: string
-  disabled?: boolean
-  loading?: boolean
-}
+  children: React.ReactNode;
+  className?: string;
+  disabled?: boolean;
+  loading?: boolean;
+};
 
 export function FormSubmit({
   children,
@@ -318,16 +321,16 @@ export function FormSubmit({
         <span className="relative">
           <span
             className={cn(
-              'transition-opacity duration-200',
-              loading && 'opacity-0'
+              "transition-opacity duration-200",
+              loading && "opacity-0",
             )}
           >
             {children}
           </span>
           <span
             className={cn(
-              'absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200',
-              loading && 'opacity-100'
+              "absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200",
+              loading && "opacity-100",
             )}
           >
             <IconLoading className="h-4 w-4 animate-spin" />
@@ -335,7 +338,7 @@ export function FormSubmit({
         </span>
       </Button>
     </RadixForm.Submit>
-  )
+  );
 }
 
-export default Form
+export default Form;

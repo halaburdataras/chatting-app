@@ -46,7 +46,7 @@ export default function LoginPage() {
   )
 }
 
-const ALLOWED_ROLES: Role[] = [Role.ADMIN, Role.SUPER_ADMIN];
+const ALLOWED_ROLES: Role[] = [Role.ADMIN, Role.SUPER_ADMIN]
 
 const LoginForm = () => {
   const [loading, setLoading] = useState(false)
@@ -61,9 +61,11 @@ const LoginForm = () => {
       const response = await login(data)
 
       if (response.success && response.data) {
-
-        if(!ALLOWED_ROLES.includes(response.data.user.role as Role)) {
-          showToast('You have no permission to access this application', ToastType.ERROR)
+        if (!ALLOWED_ROLES.includes(response.data.user.role as Role)) {
+          showToast(
+            'You have no permission to access this application',
+            ToastType.ERROR
+          )
           return
         }
 

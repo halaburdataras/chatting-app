@@ -24,9 +24,7 @@ export default function PageSection({
         )}
       </div>
 
-      <div className="overflow-hidden rounded-lg p-6 shadow-[0_0_2px_0_rgba(145,158,171,0.2),0_12px_24px_-4px_rgba(145,158,171,0.12)]">
-        {children}
-      </div>
+      <div className="shadow-card overflow-hidden p-6">{children}</div>
     </section>
   )
 }

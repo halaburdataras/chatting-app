@@ -117,13 +117,12 @@ export default function PageContent() {
         ))}
       </section>
 
-      <section className="mt-6 rounded-lg p-6 shadow-[0_0_2px_0_rgba(145,158,171,0.2),0_12px_24px_-4px_rgba(145,158,171,0.12)]">
+      <section className="shadow-card mt-6 p-6">
         <h2 className="text-lg font-bold">Most popular rooms</h2>
         <p className="font-medium text-gray-500">By monthly sent messages</p>
-        <div >
-
-        <LineChart data={chartData} className="w-full h-48 mt-4" />
-        {/* <ol className="mt-4 list-none p-0 grid gap-4 content-start">
+        <div>
+          <LineChart data={chartData} className="mt-4 h-48 w-full" />
+          {/* <ol className="mt-4 list-none p-0 grid gap-4 content-start">
           {topPerformingRooms.map((room) => (
             <li
               key={room.name}
@@ -138,7 +137,7 @@ export default function PageContent() {
             </li>
           ))}
         </ol> */}
-          </div>
+        </div>
       </section>
     </Container>
   )
@@ -154,7 +153,7 @@ type InfoSectionProps = {
 const InfoSection = ({ title, value, icon, percentage }: InfoSectionProps) => {
   const isPositive = percentage > 0
   return (
-    <div className="flex items-center justify-between rounded-lg p-6 shadow-[0_0_2px_0_rgba(145,158,171,0.2),0_12px_24px_-4px_rgba(145,158,171,0.12)]">
+    <div className="shadow-card flex items-center justify-between p-6">
       <div>
         <h3 className="text-sm font-semibold">{title}</h3>
         <div className="mt-4 flex items-center gap-2">

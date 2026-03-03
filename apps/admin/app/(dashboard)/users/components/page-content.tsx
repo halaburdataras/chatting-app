@@ -13,7 +13,7 @@ import Skeleton from '@repo/ui/components/skeleton'
 import Table from '~components/table'
 import Tag from '~components/tag'
 import usePaginatedUsers from '~hooks/use-paginated-users'
-import DotsVerticalIcon from '~icons/dots-vertical.svg'
+import IconDotsVertical from '@repo/ui/icons/IconDotsVertical'
 import { useToast } from '@repo/ui/providers/toast-provider'
 import { useUser } from '@repo/ui/providers/user-provider'
 import { ToastType } from '@repo/ui/types/index'
@@ -187,7 +187,7 @@ export default function PageContent({ username }: PageContentProps) {
                 className="min-w-32"
                 trigger={
                   <Button variant="icon">
-                    <DotsVerticalIcon className="size-5 min-w-5" />
+                    <IconDotsVertical className="size-5 min-w-5" />
                   </Button>
                 }
                 list={[
@@ -229,7 +229,7 @@ export default function PageContent({ username }: PageContentProps) {
         ]}
       />
 
-      <div className="mt-10 overflow-hidden rounded-lg shadow-[0_0_2px_0_rgba(145,158,171,0.2),0_12px_24px_-4px_rgba(145,158,171,0.12)]">
+      <div className="shadow-card mt-10 overflow-hidden">
         <Filters
           filters={filters}
           handleChangeFilters={handleChangeFilters}

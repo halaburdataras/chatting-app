@@ -1,6 +1,6 @@
-'use client'
-import { UserModel } from '@repo/shared'
-import { apiClient, getCurrentUser } from '@repo/shared/lib/api'
+"use client";
+import { UserModel } from "@repo/shared";
+import { apiClient, getCurrentUser } from "@repo/shared/lib/api";
 import {
   createContext,
   useCallback,
@@ -8,51 +8,51 @@ import {
   useEffect,
   useMemo,
   useState,
-} from 'react'
-import { useRouter } from 'next/navigation'
+} from "react";
+import { useRouter } from "next/navigation";
 
 export default function UserProvider({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const [user, setUser] = useState<UserModel | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const router = useRouter()
+  const [user, setUser] = useState<UserModel | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const fetchUser = useCallback(async () => {
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
     try {
-      const response = await getCurrentUser()
+      const response = await getCurrentUser();
       if (response.success && response.data) {
-        setUser(response.data.user)
+        setUser(response.data.user);
       }
     } catch (error) {
       setError(
         error instanceof Error
           ? error.message
-          : 'An error occurred while fetching user'
-      )
+          : "An error occurred while fetching user",
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [])
+  }, []);
 
   const logout = useCallback(async () => {
-    apiClient.removeAuthToken()
-    setUser(null)
-    setLoading(false)
-    setError(null)
-    router.push('/login')
-  }, [router])
+    apiClient.removeAuthToken();
+    setUser(null);
+    setLoading(false);
+    setError(null);
+    router.push("/login");
+  }, [router]);
 
   useEffect(() => {
     if (apiClient.isAuthenticated()) {
-      fetchUser()
+      fetchUser();
     }
-  }, [fetchUser])
+  }, [fetchUser]);
 
   const values = useMemo(
     () => ({
@@ -65,21 +65,21 @@ export default function UserProvider({
       fetchUser,
       logout,
     }),
-    [user, loading, error, fetchUser, logout]
-  )
+    [user, loading, error, fetchUser, logout],
+  );
 
-  return <UserContext.Provider value={values}>{children}</UserContext.Provider>
+  return <UserContext.Provider value={values}>{children}</UserContext.Provider>;
 }
 
 const UserContext = createContext<{
-  user: UserModel | null
-  loading: boolean
-  error: string | null
-  setUser: (user: UserModel) => void
-  setLoading: (loading: boolean) => void
-  setError: (error: string) => void
-  fetchUser: () => Promise<void>
-  logout: () => Promise<void>
+  user: UserModel | null;
+  loading: boolean;
+  error: string | null;
+  setUser: (user: UserModel) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string) => void;
+  fetchUser: () => Promise<void>;
+  logout: () => Promise<void>;
 }>({
   user: null,
   loading: false,
@@ -89,8 +89,8 @@ const UserContext = createContext<{
   setError: () => {},
   fetchUser: async () => {},
   logout: async () => {},
-})
+});
 
 export function useUser() {
-  return useContext(UserContext)
+  return useContext(UserContext);
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { Role } from '@repo/database/generated/prisma/enums.js'
-import {  updateUser } from '@repo/shared/lib/api'
+import { updateUser } from '@repo/shared/lib/api'
 import { UserModel } from '@repo/shared'
 import { cn } from '@repo/shared/utils'
 import { useRouter } from 'next/navigation'
