@@ -112,6 +112,19 @@ roomsRouter.post("/", adminRoleMiddleware, async (req, res) => {
 
     const room = await prisma.room.create({
       data: { name, user: { connect: { id: currentUser?.userId as string } } },
+      select: {
+        id: true,
+        name: true,
+        createdAt: true,
+        updatedAt: true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+            color: true,
+          },
+        },
+      },
     });
 
     res.json({ success: true, data: { room } });
@@ -161,6 +174,19 @@ roomsRouter.put("/:id", adminRoleMiddleware, async (req, res) => {
     const room = await prisma.room.update({
       where: { id: id as string },
       data: { name },
+      select: {
+        id: true,
+        name: true,
+        createdAt: true,
+        updatedAt: true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+            color: true,
+          },
+        },
+      },
     });
 
     res.json({ success: true, data: { room } });

@@ -48,6 +48,7 @@ messagesRouter.get("/", authMiddleware, async (req, res) => {
           attachments: true,
           createdAt: true,
           roomId: true,
+          userId: true,
           user: {
             select: {
               id: true,
@@ -117,6 +118,21 @@ messagesRouter.post("/", authMiddleware, async (req, res) => {
         attachments,
         user: { connect: { id: currentUser?.userId as string } },
         room: { connect: { id: room.id } },
+      },
+      select: {
+        id: true,
+        content: true,
+        attachments: true,
+        createdAt: true,
+        roomId: true,
+        userId: true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+            color: true,
+          },
+        },
       },
     });
 
@@ -230,6 +246,21 @@ messagesRouter.put("/:id", authMiddleware, async (req, res) => {
     const message = await prisma.message.update({
       where: { id: id as string },
       data: { content, attachments },
+      select: {
+        id: true,
+        content: true,
+        attachments: true,
+        createdAt: true,
+        roomId: true,
+        userId: true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+            color: true,
+          },
+        },
+      },
     });
 
     res.json({ success: true, data: { message } });
