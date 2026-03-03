@@ -89,7 +89,7 @@ const LoginForm = () => {
   return (
     <main className="grid min-h-screen content-center justify-items-center p-24">
       <h1 className="mb-6 text-center text-2xl font-bold">
-        Sign in to chatting app admin
+        Start chatting with friends!
       </h1>
       <Form
         schema={loginSchema}

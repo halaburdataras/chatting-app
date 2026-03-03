@@ -39,6 +39,7 @@ export type MessageModel = {
   createdAt: Date;
   user: Pick<UserModel, "id" | "username" | "color">;
   roomId: string;
+  userId: string;
 };
 
 export interface RoomModel {
@@ -57,4 +58,15 @@ export interface CreateRoomModel {
 
 export interface UpdateRoomModel {
   name: string;
+}
+
+export interface UpdateMessageModel {
+  content: string;
+  attachments: string[];
+}
+
+export interface CreateMessageModel {
+  content: string;
+  attachments: File[];
+  roomId: string;
 }

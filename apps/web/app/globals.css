@@ -1,2 +1,7 @@
 @import 'tailwindcss';
+@import '@repo/tailwind-config';
 @source '@repo/tailwind-config/shared-styles.css';
+
+.user-tag {
+  @apply rounded-md bg-blue-100 px-1 py-0.5 text-sm font-medium text-slate-900;
+}
