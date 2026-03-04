@@ -29,8 +29,6 @@ const DEFAULT_MESSAGES_PAGINATION_OPTIONS = {
   totalPages: 0,
 }
 
-
-
 export type ChatContextType = {
   rooms: RoomModel[]
   currentRoom: RoomModel | null
@@ -86,7 +84,15 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const messagesListRef = useRef<HTMLDivElement>(null)
 
   // users state
-  const {  users, usersSearch, setUsersSearch, usersPaginationOptions, setUsersPaginationOptions, loadingUsers, filteredUsers } = useChatUsers()
+  const {
+    users,
+    usersSearch,
+    setUsersSearch,
+    usersPaginationOptions,
+    setUsersPaginationOptions,
+    loadingUsers,
+    filteredUsers,
+  } = useChatUsers()
 
   //   Rooms state
   const [rooms, setRooms] = useState<RoomModel[]>([])
@@ -124,7 +130,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   }, [messageText])
 
   const messagesGroupedByDay = useMemo(() => {
-const sortedMessages = orderBy(messages, 'createdAt', 'asc')
+    const sortedMessages = orderBy(messages, 'createdAt', 'asc')
 
     const groupedMessages = groupBy(sortedMessages, (message: MessageModel) => {
       return formatDateToDay(message.createdAt)
@@ -219,19 +225,18 @@ const sortedMessages = orderBy(messages, 'createdAt', 'asc')
     }
   }, [currentRoom, fetchRoomMessages, messagesPaginationOptions])
 
-
   const handleSelectRoom = useCallback(
     async (room: RoomModel) => {
       setMessages([])
-      
-      if(currentRoom) {
-        socket?.emit("leaveRoom", currentRoom.id)
+
+      if (currentRoom) {
+        socket?.emit('leaveRoom', currentRoom.id)
       }
-      
+
       setCurrentRoom(room)
 
-      socket?.emit("joinRoom", room.id)
-      
+      socket?.emit('joinRoom', room.id)
+
       const initialMessagesData = await fetchRoomMessages(room.id)
 
       if (!initialMessagesData) return
@@ -266,11 +271,13 @@ const sortedMessages = orderBy(messages, 'createdAt', 'asc')
         },
       })
 
-
       if (response.success && response.data?.message) {
         const newMessage = response.data?.message as MessageModel
 
-      socket?.emit("message", { roomId: currentRoom?.id || '', message: newMessage })
+        socket?.emit('message', {
+          roomId: currentRoom?.id || '',
+          message: newMessage,
+        })
 
         setMessageText('')
         setAttachments([])
@@ -301,8 +308,8 @@ const sortedMessages = orderBy(messages, 'createdAt', 'asc')
   }, [])
 
   useEffect(() => {
-    if(socket) {
-      socket.on("message", (message: MessageModel) => {
+    if (socket) {
+      socket.on('message', (message: MessageModel) => {
         setMessages((prevMessages) => [...prevMessages, message])
       })
     }
@@ -320,7 +327,6 @@ const sortedMessages = orderBy(messages, 'createdAt', 'asc')
       window.removeEventListener('keydown', handleKeyDown)
     }
   }, [])
-
 
   const values = useMemo(
     () => ({

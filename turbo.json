@@ -6,7 +6,12 @@
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**", "generated/**"],
-      "env": ["DATABASE_URL", "CRYPTO_JS_SECRET_KEY","NODE_ENV", "NEXT_PUBLIC_WS_URL"]
+      "env": ["DATABASE_URL", "CRYPTO_JS_SECRET_KEY","NODE_ENV", "NEXT_PUBLIC_WS_URL",
+      "JWT_SECRET", 
+      "JWT_EXPIRES_IN", 
+      "FRONTEND_URL", 
+      "ADMIN_URL", 
+      "WEBSOCKET_URL"]
     },
     "lint": {
       "dependsOn": ["^lint"]

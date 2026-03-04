@@ -20,10 +20,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={geist.className}>
-        <SocketProvider>  
-
-        <UserProvider>
-          {children}</UserProvider>
+        <SocketProvider>
+          <UserProvider>{children}</UserProvider>
         </SocketProvider>
       </body>
     </html>
