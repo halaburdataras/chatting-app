@@ -1,0 +1,12 @@
+# Railway config: build with Turbo (ws app and its deps only), then run the ws app.
+# Use this when the service Root Directory is the repo root (monorepo).
+# In Railway: one service per app; point this service to the repo and use this file.
+
+[build]
+builder = "railpack"
+# Install all workspace deps from root, then build only ws and its dependencies (e.g. @repo/database).
+buildCommand = "npm install && npm run ws:build"
+
+[deploy]
+# Start the ws app via npm workspace.
+startCommand = "npm run start -w ws"
