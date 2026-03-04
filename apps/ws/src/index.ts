@@ -7,7 +7,7 @@ dotenv.config();
 
 const PORT = process.env.PORT || 8080;
 
-const isProduction = process.env.NODE_ENV === "production";
+const isProduction = process.env.RAILWAY_ENVIRONMENT_NAME === "production";
 
 const whitelist = !isProduction
   ? "*"
@@ -63,4 +63,6 @@ io.use(async (socket: Socket, next) => {
   next();
 });
 
-httpServer.listen(PORT);
+httpServer.listen(PORT, () => {
+  console.log(`WebSocket server is running on port ${PORT}`);
+});
