@@ -9,12 +9,13 @@ const PORT = process.env.PORT || 8080;
 
 const isProduction = process.env.NODE_ENV === "production";
 
-const whitelist = [
-  process.env.API_URL,
-  process.env.FRONTEND_URL,
-  process.env.ADMIN_URL,
-  ...(!isProduction ? ["*"] : []),
-].filter(Boolean) as string[];
+const whitelist = !isProduction
+  ? "*"
+  : ([
+      process.env.API_URL,
+      process.env.FRONTEND_URL,
+      process.env.ADMIN_URL,
+    ].filter(Boolean) as string[]);
 
 const app = express();
 const httpServer = createServer(app);
