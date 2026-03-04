@@ -3,16 +3,24 @@
   "ui": "stream",
   "tasks": {
     "build": {
+      "env": [
+        "DATABASE_URL", 
+        "CRYPTO_JS_SECRET_KEY",
+        "NEXT_PUBLIC_WS_URL",
+        "JWT_SECRET", 
+        "JWT_EXPIRES_IN", 
+        "FRONTEND_URL", 
+        "ADMIN_URL", 
+        "WEBSOCKET_URL"
+      ],
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**", "generated/**"],
-      "env": ["DATABASE_URL", "CRYPTO_JS_SECRET_KEY","NODE_ENV", "NEXT_PUBLIC_WS_URL",
-      "JWT_SECRET", 
-      "JWT_EXPIRES_IN", 
-      "FRONTEND_URL", 
-      "ADMIN_URL", 
-      "WEBSOCKET_URL"]
+      "inputs": ["$TURBO_DEFAULT$", ".env"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**", "generated/**"]
     },
+    "build:components": {
+  "dependsOn": ["^build"],
+  "outputs": ["dist/**"]
+},
     "lint": {
       "dependsOn": ["^lint"]
     },

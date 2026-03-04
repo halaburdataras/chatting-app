@@ -13,25 +13,19 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const isProduction = process.env.NODE_ENV === "production";
+const isProduction = process.env.VERCEL_ENV === "production";
 
-const whitelist = [
-  process.env.FRONTEND_URL,
-  process.env.ADMIN_URL,
-  process.env.WEBSOCKET_URL,
-  ...(!isProduction
-    ? [
-        "http://localhost:3001",
-        "http://localhost:3002",
-        "http://localhost:8080",
-      ]
-    : []),
-].filter(Boolean) as string[];
+const whitelist = !isProduction
+  ? "*"
+  : ([
+      process.env.FRONTEND_URL,
+      process.env.ADMIN_URL,
+      process.env.WEBSOCKET_URL,
+    ].filter(Boolean) as string[]);
 
 app.use(
   cors({
     origin: whitelist,
-    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     exposedHeaders: ["Content-Type"],
