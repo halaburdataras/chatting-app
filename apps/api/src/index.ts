@@ -26,6 +26,7 @@ const whitelist = !isProduction
 app.use(
   cors({
     origin: whitelist,
+    // credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     exposedHeaders: ["Content-Type"],
@@ -44,9 +45,6 @@ app.get("/health", async (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
-
-// Handle preflight requests
-// app.options("*", cors());
 
 // API routes
 app.use("/api/v1", apiRouter);
