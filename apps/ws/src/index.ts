@@ -13,13 +13,7 @@ const whitelist = [
   process.env.API_URL,
   process.env.FRONTEND_URL,
   process.env.ADMIN_URL,
-  ...(!isProduction
-    ? [
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "http://localhost:3002",
-      ]
-    : []),
+  ...(!isProduction ? ["*"] : []),
 ].filter(Boolean) as string[];
 
 const app = express();
