@@ -3,6 +3,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Geist } from 'next/font/google'
 import UserProvider from '@repo/ui/providers/user-provider'
+import { SocketProvider } from '@repo/ui/providers/socket-context'
 
 const geist = Geist({ subsets: ['latin'] })
 
@@ -19,7 +20,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={geist.className}>
-        <UserProvider>{children}</UserProvider>
+        <SocketProvider>  
+
+        <UserProvider>
+          {children}</UserProvider>
+        </SocketProvider>
       </body>
     </html>
   )

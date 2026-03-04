@@ -2,7 +2,7 @@ import Button from '@repo/ui/components/button'
 import Dropdown from '@repo/ui/components/dropdown'
 import IconDotsVertical from '@repo/ui/icons/IconDotsVertical'
 import IconSearch from '@repo/ui/icons/IconSearch'
-import { useChat } from '~providers/chat-context'
+import { useChat } from '~providers/chat/chat-context'
 
 export default function RoomHeader() {
   const { currentRoom } = useChat()

@@ -1,4 +1,4 @@
-import { useChat } from '~providers/chat-context'
+import { useChat } from '~providers/chat/chat-context'
 import MessageInput from './message-input'
 import RoomHeader from './room-header'
 import MessagesList from './messages-list'

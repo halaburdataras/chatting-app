@@ -1,5 +1,5 @@
 import { cn } from '@repo/shared/utils'
-import { useChat } from '~providers/chat-context'
+import { useChat } from '~providers/chat/chat-context'
 import SearchInput from '@repo/ui/components/search-input'
 import Button from '@repo/ui/components/button'
 import Skeleton from '@repo/ui/components/skeleton'

@@ -10,6 +10,7 @@ import {
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
+import { useSocket } from "./socket-context";
 
 export default function UserProvider({
   children,
@@ -20,6 +21,7 @@ export default function UserProvider({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { connect } = useSocket()
 
   const fetchUser = useCallback(async () => {
     setLoading(true);
@@ -28,6 +30,7 @@ export default function UserProvider({
       const response = await getCurrentUser();
       if (response.success && response.data) {
         setUser(response.data.user);
+        connect({ userId: response.data.user.id, username: response.data.user.username, role: response.data.user.role, color: response.data.user.color });
       }
     } catch (error) {
       setError(
@@ -38,7 +41,7 @@ export default function UserProvider({
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [connect]);
 
   const logout = useCallback(async () => {
     apiClient.removeAuthToken();
@@ -92,5 +95,12 @@ const UserContext = createContext<{
 });
 
 export function useUser() {
-  return useContext(UserContext);
+
+  const context = useContext(UserContext)
+
+  if(!context) {
+    throw new Error('useUser must be used within a UserProvider')
+  }
+
+  return context;
 }

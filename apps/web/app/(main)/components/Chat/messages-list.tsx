@@ -1,4 +1,4 @@
-import { useChat } from '~providers/chat-context'
+import { useChat } from '~providers/chat/chat-context'
 import ChatMessage, { ChatMessageSkeleton } from './chat-message'
 import Button from '@repo/ui/components/button'
 import IconLoading from '@repo/ui/icons/IconLoading'

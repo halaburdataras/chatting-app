@@ -1,4 +1,4 @@
-import { ChatProvider } from '~providers/chat-context'
+import { ChatProvider } from '~providers/chat/chat-context'
 
 export default function MainLayout({
   children,

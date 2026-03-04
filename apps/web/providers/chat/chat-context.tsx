@@ -17,6 +17,8 @@ import { formatDateToDay } from '@repo/shared/utils'
 import groupBy from 'lodash/groupBy'
 import orderBy from 'lodash/orderBy'
 import mapValues from 'lodash/mapValues'
+import { useSocket } from '@repo/ui/providers/socket-context'
+import useChatUsers from './use-chat-users'
 
 const MESSAGES_PAGE_SIZE = 20
 
@@ -26,6 +28,8 @@ const DEFAULT_MESSAGES_PAGINATION_OPTIONS = {
   total: 0,
   totalPages: 0,
 }
+
+
 
 export type ChatContextType = {
   rooms: RoomModel[]
@@ -78,7 +82,11 @@ export const ChatContext = createContext<ChatContextType>({
 
 export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const { showToast } = useToast()
+  const { socket } = useSocket()
   const messagesListRef = useRef<HTMLDivElement>(null)
+
+  // users state
+  const {  users, usersSearch, setUsersSearch, usersPaginationOptions, setUsersPaginationOptions, loadingUsers, filteredUsers } = useChatUsers()
 
   //   Rooms state
   const [rooms, setRooms] = useState<RoomModel[]>([])
@@ -116,7 +124,9 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   }, [messageText])
 
   const messagesGroupedByDay = useMemo(() => {
-    const groupedMessages = groupBy(messages, (message: MessageModel) => {
+const sortedMessages = orderBy(messages, 'createdAt', 'asc')
+
+    const groupedMessages = groupBy(sortedMessages, (message: MessageModel) => {
       return formatDateToDay(message.createdAt)
     })
 
@@ -209,11 +219,19 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [currentRoom, fetchRoomMessages, messagesPaginationOptions])
 
+
   const handleSelectRoom = useCallback(
     async (room: RoomModel) => {
       setMessages([])
+      
+      if(currentRoom) {
+        socket?.emit("leaveRoom", currentRoom.id)
+      }
+      
       setCurrentRoom(room)
 
+      socket?.emit("joinRoom", room.id)
+      
       const initialMessagesData = await fetchRoomMessages(room.id)
 
       if (!initialMessagesData) return
@@ -233,7 +251,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
         }
       }, 100)
     },
-    [fetchRoomMessages]
+    [currentRoom, fetchRoomMessages, socket]
   )
 
   const sendMessage = useCallback(async () => {
@@ -247,8 +265,12 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
           attachments,
         },
       })
+
+
       if (response.success && response.data?.message) {
         const newMessage = response.data?.message as MessageModel
+
+      socket?.emit("message", { roomId: currentRoom?.id || '', message: newMessage })
 
         setMessageText('')
         setAttachments([])
@@ -267,7 +289,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     } finally {
       setSendMessageLoading(false)
     }
-  }, [attachments, currentRoom, messageText, showToast])
+  }, [attachments, currentRoom, messageText, socket, showToast])
 
   useEffect(() => {
     const initialRoomsLoad = async () => {
@@ -277,6 +299,14 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     initialRoomsLoad()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    if(socket) {
+      socket.on("message", (message: MessageModel) => {
+        setMessages((prevMessages) => [...prevMessages, message])
+      })
+    }
+  }, [socket])
 
   useEffect(() => {
     // Clear room selection if esc is pressed
@@ -290,6 +320,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       window.removeEventListener('keydown', handleKeyDown)
     }
   }, [])
+
 
   const values = useMemo(
     () => ({

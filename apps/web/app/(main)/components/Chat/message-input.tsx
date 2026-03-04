@@ -2,7 +2,7 @@ import Button from '@repo/ui/components/button'
 import { Input } from '@repo/ui/components/form'
 import IconLoading from '@repo/ui/icons/IconLoading'
 import IconSend from '@repo/ui/icons/IconSend'
-import { useChat } from '~providers/chat-context'
+import { useChat } from '~providers/chat/chat-context'
 
 export default function MessageInput() {
   const {
