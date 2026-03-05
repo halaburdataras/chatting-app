@@ -7,6 +7,8 @@ import {
   normalizePagination,
 } from "../utils/pagination.js";
 import { Role } from "@repo/database/generated/prisma/enums.js";
+import { uploadImages } from "../middleware/upload.js";
+import cloudinary from "../lib/cloudinary/client.js";
 
 export const messagesRouter = Router();
 
@@ -78,9 +80,11 @@ messagesRouter.get("/", authMiddleware, async (req, res) => {
   }
 });
 
-messagesRouter.post("/", authMiddleware, async (req, res) => {
+messagesRouter.post("/", authMiddleware, uploadImages, async (req, res) => {
   try {
-    const { content, attachments, roomId } = req.body;
+    const { content, roomId } = req.body;
+
+    const attachments = req.files as Express.Multer.File[];
 
     if (!roomId) {
       return res.status(400).json({
@@ -112,10 +116,41 @@ messagesRouter.post("/", authMiddleware, async (req, res) => {
 
     const currentUser = req.user;
 
+    const uploadPromises = attachments.map((file, index) => {
+      return new Promise<{ secure_url: string }>((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            folder: "products",
+            public_id: `${file.originalname.toLowerCase().replace(/\s+/g, "-")}-${Date.now()}-${index}`,
+            resource_type: "image",
+            transformation: [
+              { width: 800, height: 800, crop: "limit" },
+              { quality: "auto" },
+            ],
+          },
+          (error, result) => {
+            if (error) {
+              reject(error);
+            } else if (result) {
+              resolve({ secure_url: result.secure_url });
+            } else {
+              reject(new Error("Upload failed: No result from Cloudinary"));
+            }
+          },
+        );
+
+        // Write file buffer to upload stream
+        uploadStream.end(file.buffer);
+      });
+    });
+
+    const uploadResults = await Promise.all(uploadPromises);
+    const imageUrls = uploadResults.map((result) => result.secure_url);
+
     const message = await prisma.message.create({
       data: {
         content,
-        attachments,
+        attachments: imageUrls,
         user: { connect: { id: currentUser?.userId as string } },
         room: { connect: { id: room.id } },
       },

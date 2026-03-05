@@ -82,7 +82,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
           </Toast.Description>
           <Toast.Action className="[grid-area:_action]" asChild altText="Close">
             <button>
-              <IconXCircle className="size-6 max-w-6" />
+              <IconXCircle className="size-6 max-w-6 text-gray-900/50" />
             </button>
           </Toast.Action>
         </Toast.Root>

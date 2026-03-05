@@ -54,6 +54,8 @@ export type ChatContextType = {
     search?: string
   ) => Promise<PaginatedResponse<MessageModel> | null> | null
   messagesGroupedByDay: Record<string, MessageModel[]>
+  attachments: File[]
+  setAttachments: (attachments: File[]) => void
 }
 
 export const ChatContext = createContext<ChatContextType>({
@@ -76,6 +78,8 @@ export const ChatContext = createContext<ChatContextType>({
   hasMoreMessages: false,
   loadMoreMessages: () => {},
   messagesGroupedByDay: {},
+  attachments: [],
+  setAttachments: () => {},
 })
 
 export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
@@ -349,6 +353,8 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       sendMessageLoading,
       sendMessage,
       messagesGroupedByDay,
+      attachments,
+      setAttachments,
     }),
     [
       rooms,
@@ -369,6 +375,8 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       sendMessageLoading,
       sendMessage,
       messagesGroupedByDay,
+      attachments,
+      setAttachments,
     ]
   )
 

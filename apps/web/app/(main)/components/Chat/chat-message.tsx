@@ -2,6 +2,7 @@ import { MessageModel } from '@repo/shared'
 import { cn, formatDateToLocalTime } from '@repo/shared/utils'
 import Skeleton from '@repo/ui/components/skeleton'
 import { useUser } from '@repo/ui/providers/user-provider'
+import Image from 'next/image'
 
 type ChatMessageProps = {
   message: MessageModel
@@ -63,7 +64,12 @@ export default function ChatMessage({
             (isMiddlePerUser || isLastPerUser) && 'hidden'
           )}
         >
-          <p className="text-sm font-semibold">{username}</p>
+          <p
+            className="max-w-28 truncate text-sm font-semibold"
+            title={username}
+          >
+            {username}
+          </p>
           <span className="leading-0 text-slate-400">•</span>
           <p className="text-xs text-slate-400">
             {formatDateToLocalTime(message.createdAt)}
@@ -72,7 +78,7 @@ export default function ChatMessage({
 
         <div
           className={cn(
-            'rounded-lg bg-gray-100 p-3 text-sm',
+            'rounded-lg bg-gray-100 p-3 text-sm whitespace-pre-line',
             isCurrentUser && 'bg-emerald-100',
             isMiddlePerUser && isCurrentUser && 'rounded-r-sm',
             isMiddlePerUser && !isCurrentUser && 'rounded-l-sm',
@@ -81,8 +87,31 @@ export default function ChatMessage({
             isFirstPerUser && isCurrentUser && 'rounded-br-sm',
             isFirstPerUser && !isCurrentUser && 'rounded-bl-sm'
           )}
-          dangerouslySetInnerHTML={{ __html: message.content || '' }}
-        />
+        >
+          {!!message.content && (
+            <div dangerouslySetInnerHTML={{ __html: message.content || '' }} />
+          )}
+
+          {!!message.attachments.length && (
+            <div
+              className={cn(
+                'flex flex-wrap gap-2',
+                !!message.content && 'mt-2'
+              )}
+            >
+              {message.attachments.map((attachment) => (
+                <Image
+                  key={attachment}
+                  src={attachment}
+                  alt="Attachment"
+                  width={245}
+                  height={245}
+                  className="rounded-md object-cover"
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

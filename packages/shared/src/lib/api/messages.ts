@@ -63,11 +63,19 @@ export async function createMessage({
     };
   }
 
-  return apiClient.post<{ message: MessageModel }>(`/api/v1/messages`, {
-    content: data.content,
-    attachments: data.attachments,
-    roomId: data.roomId,
-  });
+  const formData = new FormData();
+  formData.append("content", data.content);
+  formData.append("roomId", data.roomId);
+  if (data.attachments) {
+    data.attachments.forEach((attachment) => {
+      formData.append("attachments", attachment);
+    });
+  }
+
+  return apiClient.post<{ message: MessageModel }>(
+    `/api/v1/messages`,
+    formData,
+  );
 }
 
 export async function deleteMessage({
