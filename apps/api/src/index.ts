@@ -15,18 +15,23 @@ const PORT = process.env.PORT || 3000;
 
 const isProduction = process.env.VERCEL_ENV === "production";
 
-const whitelist = !isProduction
-  ? "*"
-  : ([
-      process.env.FRONTEND_URL,
-      process.env.ADMIN_URL,
-      process.env.WEBSOCKET_URL,
-    ].filter(Boolean) as string[]);
+const whitelist = [
+  process.env.WS_URL,
+  process.env.FRONTEND_URL,
+  process.env.ADMIN_URL,
+  ...(!isProduction
+    ? [
+        "http://localhost:3001",
+        "http://localhost:3002",
+        "http://localhost:8080",
+      ]
+    : []),
+].filter(Boolean) as string[];
 
 app.use(
   cors({
     origin: whitelist,
-    // credentials: true,
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     exposedHeaders: ["Content-Type"],
