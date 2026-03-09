@@ -24,6 +24,7 @@ model User {
   updatedAt DateTime  @updatedAt
   messages  Message[]
   rooms     Room[]
+  avatar    String?
 }
 
 model Message {
@@ -46,4 +47,5 @@ model Room {
   messages  Message[]
   userId    String
   user      User      @relation(fields: [userId], references: [id])
+  avatar    String?
 }
