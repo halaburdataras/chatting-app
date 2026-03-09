@@ -15,8 +15,17 @@ export default function PageLoader({ id }: { id: string }) {
           { label: 'Edit User', href: `/users/edit/${id}` },
         ]}
       />
+      <PageSection
+        title="Profile image"
+        description="This photo will be displayed in the chat"
+        className="mt-10"
+      >
+        {Array.from({ length: 1 }).map((_, index) => (
+          <FormFieldSkeleton key={index} />
+        ))}
+      </PageSection>
 
-      <PageSection title="User information" className="mt-10">
+      <PageSection title="User information">
         {Array.from({ length: 3 }).map((_, index) => (
           <FormFieldSkeleton key={index} />
         ))}

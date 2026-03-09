@@ -20,6 +20,7 @@ import { ToastType } from '@repo/ui/types/index'
 import Filters from './filters'
 import PageHero from '~components/page-hero'
 import PlusIcon from '~icons/plus.svg'
+import Image from 'next/image'
 
 const TAG_COLORS: Record<Role, 'info' | 'warning' | 'error'> = {
   [Role.USER]: 'info',
@@ -28,6 +29,12 @@ const TAG_COLORS: Record<Role, 'info' | 'warning' | 'error'> = {
 }
 
 const COL_SKELETONS = [
+  {
+    header: '',
+    accessorKey: 'avatar',
+    size: 52,
+    cell: () => <Skeleton className="h-9 w-9 shrink-0 rounded-full" />,
+  },
   {
     header: 'Username',
     accessorKey: 'username',
@@ -90,6 +97,20 @@ export default function PageContent({ username }: PageContentProps) {
 
   const columns = useMemo(
     (): ColumnDef<UserModel>[] => [
+      {
+        header: '',
+        accessorKey: 'avatar',
+        size: 52,
+        cell: ({ row }) => (
+          <Image
+            src={row.original.avatar ?? '/images/user-empty-avatar.svg'}
+            alt="Avatar"
+            className="h-9 w-9 shrink-0 rounded-full object-cover bg-slate-100"
+            width={36}
+            height={36}
+          />
+        ),
+      },
       {
         header: 'Username',
         accessorKey: 'username',

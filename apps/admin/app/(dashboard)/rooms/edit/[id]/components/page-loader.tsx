@@ -22,6 +22,12 @@ export default function PageLoader({ id }: { id: string }) {
         ))}
       </PageSection>
 
+      <PageSection title="Room information">
+        {Array.from({ length: 1 }).map((_, index) => (
+          <FormFieldSkeleton key={index} />
+        ))}
+      </PageSection>
+
       <Skeleton className="mt-4 ml-auto h-10 w-48 bg-slate-900" />
     </Container>
   )

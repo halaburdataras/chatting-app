@@ -16,6 +16,7 @@ export interface UserModel {
   color: string;
   createdAt: Date;
   updatedAt: Date;
+  avatar: string | null;
 }
 
 export interface CreateUserModel {
@@ -24,12 +25,14 @@ export interface CreateUserModel {
   password: string;
   role: Role;
   color: string;
+  avatar: File | null;
 }
 
 export interface UpdateUserModel {
   username: string;
   role: Role;
   color: string;
+  avatar: File | null | undefined;
 }
 
 export type MessageModel = {
@@ -50,14 +53,17 @@ export interface RoomModel {
   messages: MessageModel[];
   userId: string;
   user: Pick<UserModel, "id" | "username" | "color">;
+  avatar: string | null;
 }
 
 export interface CreateRoomModel {
   name: string;
+  avatar: File | null;
 }
 
 export interface UpdateRoomModel {
   name: string;
+  avatar?: File | null;
 }
 
 export interface UpdateMessageModel {

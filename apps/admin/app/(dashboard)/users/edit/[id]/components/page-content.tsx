@@ -14,6 +14,7 @@ import PageSection from '~components/page-section'
 import { useToast } from '@repo/ui/providers/toast-provider'
 import { ToastType } from '@repo/ui/types/index'
 import { useUser } from '@repo/ui/providers/user-provider'
+import AvatarInput from '@repo/ui/components/avatar-input'
 
 const editUserSchema = z.object({
   'user-username': z.string().min(1, 'Username is required'),
@@ -61,6 +62,9 @@ export default function PageContent({ user }: PageContentProps) {
   const { showToast } = useToast()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [avatar, setAvatar] = useState<File | string | null>(
+    user?.avatar || null
+  )
 
   const defaultValues: EditUserFormValues = {
     'user-username': user?.username || '',
@@ -88,6 +92,7 @@ export default function PageContent({ user }: PageContentProps) {
           username: data['user-username'],
           role: data['user-role'],
           color: data['user-color'],
+          avatar: typeof avatar === 'string' ? undefined : avatar,
         },
       })
 
@@ -124,6 +129,12 @@ export default function PageContent({ user }: PageContentProps) {
         onSubmit={handleSubmit}
         className={cn('mt-4 w-full')}
       >
+        <PageSection
+          title="Profile image"
+          description="This photo will be displayed in the chat"
+        >
+          <AvatarInput initialImage={avatar} onImageChange={setAvatar} />
+        </PageSection>
         <PageSection title="User information">
           {INFO_FIELDS.map((field) => (
             <FormField key={field.name} {...field} />

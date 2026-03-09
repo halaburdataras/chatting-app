@@ -11,6 +11,7 @@ import PageHero from '~components/page-hero'
 import PageSection from '~components/page-section'
 import { useToast } from '@repo/ui/providers/toast-provider'
 import { ToastType } from '@repo/ui/types/index'
+import AvatarInput from '@repo/ui/components/avatar-input'
 
 const addRoomSchema = z.object({
   'room-name': z.string().min(1, 'Room name is required'),
@@ -36,6 +37,7 @@ export default function PageContent() {
   const { showToast } = useToast()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [avatar, setAvatar] = useState<File | null>(null)
 
   const handleSubmit = async (data: AddRoomFormValues) => {
     setLoading(true)
@@ -43,6 +45,7 @@ export default function PageContent() {
       const response = await createRoom({
         data: {
           name: data['room-name'],
+          avatar: avatar ?? null,
         },
       })
 
@@ -79,6 +82,12 @@ export default function PageContent() {
         onSubmit={handleSubmit}
         className={cn('mt-4 w-full')}
       >
+        <PageSection
+          title="Room image"
+          description="This image will be displayed for the room"
+        >
+          <AvatarInput initialImage={avatar} onImageChange={setAvatar} fallbackImage="/images/room-empty-avatar.svg" />
+        </PageSection>
         <PageSection title="Room information">
           {INFO_FIELDS.map((field) => (
             <FormField key={field.name} {...field} />

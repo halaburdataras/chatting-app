@@ -5,6 +5,15 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
 
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      },
+    ],
+  },
+
   turbopack: {
     rules: {
       '*.svg': {

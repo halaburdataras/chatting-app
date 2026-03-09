@@ -39,9 +39,12 @@ export async function createRoom({
 }: {
   data: CreateRoomModel;
 }): Promise<ApiResponse<{ room: RoomModel }>> {
-  return apiClient.post<{ room: RoomModel }>(`/api/v1/rooms`, {
-    name: data.name,
-  });
+  const formData = new FormData();
+  formData.append("name", data.name);
+  if (data.avatar) {
+    formData.append("avatar", data.avatar);
+  }
+  return apiClient.post<{ room: RoomModel }>(`/api/v1/rooms`, formData);
 }
 
 export async function deleteRoom({
@@ -59,7 +62,12 @@ export async function updateRoom({
   id: string;
   data: UpdateRoomModel;
 }): Promise<ApiResponse<{ room: RoomModel }>> {
-  return apiClient.put<{ room: RoomModel }>(`/api/v1/rooms/${id}`, data);
+  const formData = new FormData();
+  formData.append("name", data.name);
+  if (data.avatar || data.avatar === null) {
+    formData.append("avatar", data.avatar as File);
+  }
+  return apiClient.put<{ room: RoomModel }>(`/api/v1/rooms/${id}`, formData);
 }
 
 export async function getRoom({

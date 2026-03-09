@@ -4,7 +4,9 @@ import { forwardRef } from "react";
 
 type ButtonProps = {
   children: React.ReactNode;
-  onClick?: () => void;
+  onClick?: (
+    e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement | HTMLElement>,
+  ) => void;
   type?: "button" | "submit" | "reset";
   className?: string;
   variant?:

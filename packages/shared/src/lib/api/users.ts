@@ -45,13 +45,17 @@ export async function createUser({
 }: {
   data: CreateUserModel;
 }): Promise<ApiResponse<{ user: UserModel }>> {
-  return apiClient.post<{ user: UserModel }>(`/api/v1/users`, {
-    email: data.email,
-    username: data.username,
-    password: data.password,
-    role: data.role,
-    color: data.color,
-  });
+  const formData = new FormData();
+  formData.append("email", data.email);
+  formData.append("username", data.username);
+  formData.append("password", data.password);
+  formData.append("role", data.role);
+  formData.append("color", data.color);
+  if (data.avatar) {
+    formData.append("avatar", data.avatar);
+  }
+
+  return apiClient.post<{ user: UserModel }>(`/api/v1/users`, formData);
 }
 
 export async function deleteUser({
@@ -69,7 +73,14 @@ export async function updateUser({
   id: string;
   data: UpdateUserModel;
 }): Promise<ApiResponse<{ user: UserModel }>> {
-  return apiClient.put<{ user: UserModel }>(`/api/v1/users/${id}`, data);
+  const formData = new FormData();
+  formData.append("username", data.username);
+  formData.append("role", data.role);
+  formData.append("color", data.color);
+  if (data.avatar || data.avatar === null) {
+    formData.append("avatar", data.avatar as File);
+  }
+  return apiClient.put<{ user: UserModel }>(`/api/v1/users/${id}`, formData);
 }
 
 export async function getUser({
