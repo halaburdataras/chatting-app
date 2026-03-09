@@ -6,13 +6,40 @@ import {
   calculatePagination,
   normalizePagination,
 } from "../utils/pagination.js";
-import {
-  adminRoleMiddleware,
-  superAdminRoleMiddleware,
-} from "../middleware/role.js";
+import { adminRoleMiddleware } from "../middleware/role.js";
+import { uploadAvatar } from "../middleware/upload.js";
 import { Role } from "@repo/database/generated/prisma/enums.js";
+import cloudinary from "../lib/cloudinary/client.js";
 
 export const roomsRouter = Router();
+
+async function uploadRoomAvatarToCloudinary(avatar: Express.Multer.File) {
+  return await new Promise<{ secure_url: string }>((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: "rooms",
+        public_id: `${avatar.originalname.toLowerCase().replace(/\s+/g, "-")}-${Date.now()}`,
+        resource_type: "image",
+        transformation: [
+          { width: 200, height: 200, crop: "limit" },
+          { quality: "auto" },
+        ],
+      },
+      (error, result) => {
+        if (error) {
+          reject(error);
+        } else if (result) {
+          resolve({ secure_url: result.secure_url });
+        } else {
+          reject(new Error("Upload failed: No result from Cloudinary"));
+        }
+      },
+    );
+
+    // Write file buffer to upload stream
+    uploadStream.end(avatar.buffer);
+  });
+}
 
 roomsRouter.get("/", authMiddleware, async (req, res) => {
   try {
@@ -42,11 +69,30 @@ roomsRouter.get("/", authMiddleware, async (req, res) => {
           name: true,
           createdAt: true,
           updatedAt: true,
+          avatar: true,
           user: {
             select: {
               id: true,
               username: true,
               color: true,
+            },
+          },
+          messages: {
+            take: 1,
+            select: {
+              attachments: true,
+              content: true,
+              createdAt: true,
+              id: true,
+              userId: true,
+              user: {
+                select: {
+                  id: true,
+                  username: true,
+                  color: true,
+                  avatar: true,
+                },
+              },
             },
           },
         },
@@ -85,7 +131,41 @@ roomsRouter.get("/:id", authMiddleware, async (req, res) => {
         .json({ success: false, error: "Room ID is required" });
     }
 
-    const room = await prisma.room.findUnique({ where: { id: id as string } });
+    const room = await prisma.room.findUnique({
+      where: { id: id as string },
+      select: {
+        id: true,
+        name: true,
+        createdAt: true,
+        updatedAt: true,
+        avatar: true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+            color: true,
+          },
+        },
+        messages: {
+          take: 1,
+          select: {
+            attachments: true,
+            content: true,
+            createdAt: true,
+            id: true,
+            userId: true,
+            user: {
+              select: {
+                id: true,
+                username: true,
+                color: true,
+                avatar: true,
+              },
+            },
+          },
+        },
+      },
+    });
 
     if (!room) {
       return res.status(404).json({ success: false, error: "Room not found" });
@@ -98,7 +178,7 @@ roomsRouter.get("/:id", authMiddleware, async (req, res) => {
   }
 });
 
-roomsRouter.post("/", adminRoleMiddleware, async (req, res) => {
+roomsRouter.post("/", adminRoleMiddleware, uploadAvatar, async (req, res) => {
   try {
     const { name } = req.body;
 
@@ -108,15 +188,28 @@ roomsRouter.post("/", adminRoleMiddleware, async (req, res) => {
         .json({ success: false, error: "Name is required" });
     }
 
+    const avatar = req.file as Express.Multer.File | undefined;
+
+    let uploadResult: { secure_url: string } | null = null;
+
+    if (avatar) {
+      uploadResult = await uploadRoomAvatarToCloudinary(avatar);
+    }
+
     const currentUser = req.user;
 
     const room = await prisma.room.create({
-      data: { name, user: { connect: { id: currentUser?.userId as string } } },
+      data: {
+        name,
+        user: { connect: { id: currentUser?.userId as string } },
+        avatar: uploadResult?.secure_url ?? null,
+      },
       select: {
         id: true,
         name: true,
         createdAt: true,
         updatedAt: true,
+        avatar: true,
         user: {
           select: {
             id: true,
@@ -134,7 +227,7 @@ roomsRouter.post("/", adminRoleMiddleware, async (req, res) => {
   }
 });
 
-roomsRouter.put("/:id", adminRoleMiddleware, async (req, res) => {
+roomsRouter.put("/:id", adminRoleMiddleware, uploadAvatar, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -142,6 +235,14 @@ roomsRouter.put("/:id", adminRoleMiddleware, async (req, res) => {
       return res
         .status(400)
         .json({ success: false, error: "Room ID is required" });
+    }
+
+    const { name, avatar: avatarFromBody } = req.body;
+
+    if (!name) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Name is required" });
     }
 
     const roomToUpdate = await prisma.room.findUnique({
@@ -163,22 +264,29 @@ roomsRouter.put("/:id", adminRoleMiddleware, async (req, res) => {
         .json({ success: false, error: "Permission denied" });
     }
 
-    const { name } = req.body;
+    const avatar = req.file as Express.Multer.File | undefined;
 
-    if (!name) {
-      return res
-        .status(400)
-        .json({ success: false, error: "Name is required" });
+    let uploadResult: { secure_url: string } | null = null;
+
+    if (avatar) {
+      uploadResult = await uploadRoomAvatarToCloudinary(avatar);
     }
 
     const room = await prisma.room.update({
       where: { id: id as string },
-      data: { name },
+      data: {
+        name,
+        avatar:
+          avatar || avatarFromBody === null || avatarFromBody === "null"
+            ? uploadResult?.secure_url || null
+            : undefined,
+      },
       select: {
         id: true,
         name: true,
         createdAt: true,
         updatedAt: true,
+        avatar: true,
         user: {
           select: {
             id: true,

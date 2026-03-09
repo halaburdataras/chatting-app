@@ -12,8 +12,38 @@ import {
 import { Role } from "@repo/database/generated/prisma/enums.js";
 import { ApiResponse, PaginatedResponse, UserModel } from "@repo/shared";
 import bcrypt from "bcryptjs";
+import { uploadAvatar } from "../middleware/upload.js";
+import cloudinary from "../lib/cloudinary/client.js";
 
 export const usersRouter = Router();
+
+async function uploadAvatarToCloudinary(avatar: Express.Multer.File) {
+  return await new Promise<{ secure_url: string }>((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: "users",
+        public_id: `${avatar.originalname.toLowerCase().replace(/\s+/g, "-")}-${Date.now()}`,
+        resource_type: "image",
+        transformation: [
+          { width: 200, height: 200, crop: "limit" },
+          { quality: "auto" },
+        ],
+      },
+      (error, result) => {
+        if (error) {
+          reject(error);
+        } else if (result) {
+          resolve({ secure_url: result.secure_url });
+        } else {
+          reject(new Error("Upload failed: No result from Cloudinary"));
+        }
+      },
+    );
+
+    // Write file buffer to upload stream
+    uploadStream.end(avatar.buffer);
+  });
+}
 
 usersRouter.get("/current-user", authMiddleware, async (req, res) => {
   try {
@@ -123,9 +153,11 @@ usersRouter.get("/:id", adminRoleMiddleware, async (req, res) => {
   }
 });
 
-usersRouter.post("/", adminRoleMiddleware, async (req, res) => {
+usersRouter.post("/", adminRoleMiddleware, uploadAvatar, async (req, res) => {
   try {
     const { email, username, password, role, color } = req.body;
+
+    const avatar = req.file as Express.Multer.File;
 
     if (!email || !username || !password || !role || !color) {
       return res.status(400).json({
@@ -143,6 +175,23 @@ usersRouter.post("/", adminRoleMiddleware, async (req, res) => {
       });
     }
 
+    const possibleUserByEmailOrUsername = await prisma.user.findFirst({
+      where: { OR: [{ email }, { username }] },
+    });
+
+    if (possibleUserByEmailOrUsername) {
+      return res.status(400).json({
+        success: false,
+        error: "User with this email or username already exists",
+      });
+    }
+
+    let uploadResult: { secure_url: string } | null = null;
+
+    if (avatar) {
+      uploadResult = await uploadAvatarToCloudinary(avatar);
+    }
+
     async function encryptPassword(password: string) {
       return await bcrypt.hash(password, 10);
     }
@@ -156,6 +205,7 @@ usersRouter.post("/", adminRoleMiddleware, async (req, res) => {
         password: encryptedPassword,
         role,
         color,
+        avatar: uploadResult?.secure_url || null,
       },
     });
 
@@ -166,10 +216,14 @@ usersRouter.post("/", adminRoleMiddleware, async (req, res) => {
   }
 });
 
-usersRouter.put("/:id", adminRoleMiddleware, async (req, res) => {
+usersRouter.put("/:id", adminRoleMiddleware, uploadAvatar, async (req, res) => {
   try {
     const { id } = req.params;
-    const { email, username, role, color } = req.body;
+    const { email, username, avatar: avatarFromBody, role, color } = req.body;
+
+    console.log({ avatarFromBody });
+
+    const avatar = req.file as Express.Multer.File;
 
     if (!id) {
       return res.status(400).json({
@@ -212,9 +266,23 @@ usersRouter.put("/:id", adminRoleMiddleware, async (req, res) => {
       });
     }
 
+    let uploadResult: { secure_url: string } | null = null;
+    if (avatar) {
+      uploadResult = await uploadAvatarToCloudinary(avatar);
+    }
+
     const user = await prisma.user.update({
       where: { id: id as string },
-      data: { email, username, role, color },
+      data: {
+        email,
+        username,
+        role,
+        color,
+        avatar:
+          avatar || avatarFromBody === null || avatarFromBody === "null"
+            ? uploadResult?.secure_url || null
+            : undefined,
+      },
     });
 
     res.json({ success: true, data: { user } });
