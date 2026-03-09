@@ -304,7 +304,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const initialRoomsLoad = async () => {
-      const initialRooms = await fetchRooms(1,10,roomSearchDebounced)
+      const initialRooms = await fetchRooms(1, 10, roomSearchDebounced)
       setRooms(initialRooms)
     }
     initialRoomsLoad()
