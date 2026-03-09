@@ -36,13 +36,13 @@
         "check-types": "tsc --noEmit"
     },
     "dependencies": {
-        "@prisma/adapter-pg": "^7.4.1",
-        "@prisma/client": "^7.4.1",
+        "@prisma/adapter-pg": "^7.4.2",
+        "@prisma/client": "^7.4.2",
         "bcryptjs": "^3.0.3",
         "pg": "^8.18.0"
     },
     "devDependencies": {
         "@types/crypto-js": "^4.2.2",
-        "prisma": "^7.4.1"
+        "prisma": "^7.4.2"
     }
 }
