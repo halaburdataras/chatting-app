@@ -1,11 +1,11 @@
 'use client'
 
 import { Role } from '@repo/database/generated/prisma/enums.js'
-import { RoomModel } from '@repo/shared'
-import { deleteRoom } from '@repo/shared/lib/api'
+import { MessageModel, RoomModel } from '@repo/shared'
+import { deleteRoom, getMessagesForExport } from '@repo/shared/lib/api'
 import { ColumnDef } from '@tanstack/react-table'
 import { useRouter } from 'next/navigation'
-import { useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import Button from '@repo/ui/components/button'
 import Container from '@repo/ui/components/container'
 import Dropdown from '@repo/ui/components/dropdown'
@@ -22,17 +22,49 @@ import usePaginatedRooms from '~hooks/use-paginated-rooms'
 import Link from 'next/link'
 import Image from 'next/image'
 
+function escapeCsvCell(value: string | null | undefined): string {
+  if (value == null) return ''
+  const s = String(value)
+  if (/[",\n\r]/.test(s)) {
+    return `"${s.replace(/"/g, '""')}"`
+  }
+  return s
+}
+
+function buildMessagesCsv(messages: MessageModel[]): string {
+  const header = [
+    'Id',
+    'Created At',
+    'Username',
+    'User Id',
+    'Content',
+    'Attachments',
+  ].join(',')
+  const rows = messages.map((m) =>
+    [
+      escapeCsvCell(m.id),
+      escapeCsvCell(m.createdAt ? new Date(m.createdAt).toISOString() : ''),
+      escapeCsvCell(m.user?.username),
+      escapeCsvCell(m.userId),
+      escapeCsvCell(m.content ?? ''),
+      escapeCsvCell(
+        Array.isArray(m.attachments) ? m.attachments.join('; ') : ''
+      ),
+    ].join(',')
+  )
+  return [header, ...rows].join('\r\n')
+}
+
 const COL_SKELETONS = [
-  {
-    header: '',
-    accessorKey: 'avatar',
-    size: 52,
-    cell: () => <Skeleton className="h-9 w-9 shrink-0 rounded-full" />,
-  },
   {
     header: 'Name',
     accessorKey: 'name',
-    cell: () => <Skeleton className="w-1/2" />,
+    cell: () => (
+      <div className="flex items-center gap-2">
+        <Skeleton className="h-9 w-9 shrink-0 rounded-full" />
+        <Skeleton className="w-1/2" />
+      </div>
+    ),
   },
   {
     header: 'Created By',
@@ -79,29 +111,53 @@ export default function PageContent() {
     fetchRooms,
   } = usePaginatedRooms({ limit: 10 })
   const router = useRouter()
+  const [exportingRoomId, setExportingRoomId] = useState<string | null>(null)
+
+  const handleExportMessages = useCallback(
+    async (roomId: string, roomName: string) => {
+      setExportingRoomId(roomId)
+      try {
+        const response = await getMessagesForExport({ roomId })
+        if (!response.success || !response.data?.messages) {
+          showToast(
+            response.error ?? 'Failed to export messages',
+            ToastType.ERROR
+          )
+          return
+        }
+        const csv = buildMessagesCsv(response.data.messages)
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `room-${roomName.replace(/[^a-z0-9-_]/gi, '-')}-messages-${new Date().toISOString().slice(0, 10)}.csv`
+        a.click()
+        URL.revokeObjectURL(url)
+        showToast('Messages exported successfully', ToastType.SUCCESS)
+      } catch (error) {
+        console.error(error)
+        showToast('Failed to export messages', ToastType.ERROR)
+      } finally {
+        setExportingRoomId(null)
+      }
+    },
+    [showToast]
+  )
 
   const columns = useMemo(
     (): ColumnDef<RoomModel>[] => [
       {
-        header: '',
-        accessorKey: 'avatar',
-        size: 52,
-        cell: ({ row }) => (
-          <Image
-            src={row.original.avatar ?? '/images/room-empty-avatar.svg'}
-            alt="Avatar"
-            className="h-9 w-9 shrink-0 rounded-full object-cover"
-            width={36}
-            height={36}
-          />
-        ),
-      },
-      {
         header: 'Name',
         accessorKey: 'name',
         cell: ({ row }) => (
-          <div className="flex">
-            {' '}
+          <div className="flex items-center gap-2">
+            <Image
+              src={row.original.avatar ?? '/images/user-empty-avatar.svg'}
+              alt="Avatar"
+              className="h-9 w-9 shrink-0 rounded-full bg-slate-100 object-cover"
+              width={36}
+              height={36}
+            />
             <span className="min-w-0 flex-1 truncate">{row.original.name}</span>
           </div>
         ),
@@ -194,9 +250,9 @@ export default function PageContent() {
                   },
                   {
                     label: 'Export messages to CSV',
-                    onClick: () => {
-                      console.log('TODO: Export messages to CSV')
-                    },
+                    onClick: () =>
+                      handleExportMessages(row.original.id, row.original.name),
+                    disabled: exportingRoomId === row.original.id,
                   },
                   {
                     label: 'Delete',
@@ -210,7 +266,7 @@ export default function PageContent() {
         },
       },
     ],
-    [user, router, showToast, fetchRooms]
+    [user, router, showToast, fetchRooms, handleExportMessages, exportingRoomId]
   )
 
   return (

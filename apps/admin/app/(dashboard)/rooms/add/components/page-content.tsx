@@ -86,7 +86,11 @@ export default function PageContent() {
           title="Room image"
           description="This image will be displayed for the room"
         >
-          <AvatarInput initialImage={avatar} onImageChange={setAvatar} fallbackImage="/images/room-empty-avatar.svg" />
+          <AvatarInput
+            initialImage={avatar}
+            onImageChange={setAvatar}
+            fallbackImage="/images/room-empty-avatar.svg"
+          />
         </PageSection>
         <PageSection title="Room information">
           {INFO_FIELDS.map((field) => (

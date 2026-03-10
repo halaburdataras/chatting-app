@@ -38,7 +38,9 @@ export default function PageContent({ room }: PageContentProps) {
   const { showToast } = useToast()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const [avatar, setAvatar] = useState<File | string | null>(room?.avatar || null)
+  const [avatar, setAvatar] = useState<File | string | null>(
+    room?.avatar || null
+  )
 
   const defaultValues: EditRoomFormValues = {
     'room-name': room?.name || '',
@@ -91,7 +93,6 @@ export default function PageContent({ room }: PageContentProps) {
         <PageSection
           title="Room image"
           description="This image will be displayed for the room"
-          
         >
           <AvatarInput
             initialImage={avatar}

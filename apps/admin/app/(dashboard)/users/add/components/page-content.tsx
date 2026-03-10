@@ -148,7 +148,7 @@ export default function PageContent() {
           title="Profile image"
           description="This photo will be displayed in the chat"
         >
-          <AvatarInput initialImage={avatar} onImageChange={setAvatar}  />
+          <AvatarInput initialImage={avatar} onImageChange={setAvatar} />
         </PageSection>
         <PageSection title="User information">
           {INFO_FIELDS.map((field) => (

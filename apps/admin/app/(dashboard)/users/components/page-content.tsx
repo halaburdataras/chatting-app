@@ -30,15 +30,14 @@ const TAG_COLORS: Record<Role, 'info' | 'warning' | 'error'> = {
 
 const COL_SKELETONS = [
   {
-    header: '',
-    accessorKey: 'avatar',
-    size: 52,
-    cell: () => <Skeleton className="h-9 w-9 shrink-0 rounded-full" />,
-  },
-  {
     header: 'Username',
     accessorKey: 'username',
-    cell: () => <Skeleton className="w-1/2" />,
+    cell: () => (
+      <div className="flex items-center gap-2">
+        <Skeleton className="h-9 w-9 shrink-0 rounded-full" />
+        <Skeleton className="w-1/2" />
+      </div>
+    ),
   },
   {
     header: 'Email',
@@ -98,25 +97,17 @@ export default function PageContent({ username }: PageContentProps) {
   const columns = useMemo(
     (): ColumnDef<UserModel>[] => [
       {
-        header: '',
-        accessorKey: 'avatar',
-        size: 52,
-        cell: ({ row }) => (
-          <Image
-            src={row.original.avatar ?? '/images/user-empty-avatar.svg'}
-            alt="Avatar"
-            className="h-9 w-9 shrink-0 rounded-full object-cover bg-slate-100"
-            width={36}
-            height={36}
-          />
-        ),
-      },
-      {
         header: 'Username',
         accessorKey: 'username',
         cell: ({ row }) => (
-          <div className="flex">
-            {' '}
+          <div className="flex items-center gap-2">
+            <Image
+              src={row.original.avatar ?? '/images/user-empty-avatar.svg'}
+              alt="Avatar"
+              className="h-9 w-9 shrink-0 rounded-full bg-slate-100 object-cover"
+              width={36}
+              height={36}
+            />
             <span className="min-w-0 flex-1 truncate">
               {row.original.username}
             </span>
