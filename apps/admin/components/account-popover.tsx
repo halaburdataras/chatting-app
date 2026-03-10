@@ -5,12 +5,21 @@ import UserAvatarIcon from '~icons/user-avatar.svg'
 import { useUser } from '@repo/ui/providers/user-provider'
 import Dropdown from '@repo/ui/components/dropdown'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 
 export default function AccountPopover() {
   const { logout, user } = useUser()
+  const router = useRouter()
 
   const list = useMemo(
     () => [
+      {
+        label: 'Settings',
+        dividerPosition: 'top',
+        onClick: () => {
+          router.push('/settings')
+        },
+      },
       {
         label: 'Logout',
         variant: 'error',
@@ -20,7 +29,7 @@ export default function AccountPopover() {
         },
       },
     ],
-    [logout]
+    [logout, router]
   )
 
   return (
