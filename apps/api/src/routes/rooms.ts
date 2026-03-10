@@ -1,7 +1,12 @@
 import { Router } from "express";
 import { authMiddleware } from "../middleware/auth.js";
 import prisma from "@repo/database";
-import { ApiResponse, PaginatedResponse, RoomModel } from "@repo/shared";
+import {
+  ApiResponse,
+  MessageModel,
+  PaginatedResponse,
+  RoomModel,
+} from "@repo/shared";
 import {
   calculatePagination,
   normalizePagination,
@@ -120,6 +125,57 @@ roomsRouter.get("/", authMiddleware, async (req, res) => {
     res.status(500).json({ success: false, error: "Internal server error" });
   }
 });
+
+const EXPORT_MESSAGES_LIMIT = 10_000;
+
+roomsRouter.get(
+  "/:id/export-messages",
+  adminRoleMiddleware,
+  async (req, res) => {
+    try {
+      const roomId = req.params.id as string;
+
+      if (!roomId) {
+        return res
+          .status(400)
+          .json({ success: false, error: "Room ID is required" });
+      }
+
+      const messages = await prisma.message.findMany({
+        where: { roomId: roomId as string },
+        orderBy: { createdAt: "asc" },
+        take: EXPORT_MESSAGES_LIMIT,
+        select: {
+          id: true,
+          content: true,
+          attachments: true,
+          createdAt: true,
+          roomId: true,
+          userId: true,
+          user: {
+            select: {
+              id: true,
+              username: true,
+              color: true,
+            },
+          },
+        },
+      });
+
+      const response: ApiResponse<{ messages: MessageModel[] }> = {
+        success: true,
+        data: {
+          messages: messages as MessageModel[],
+        },
+      };
+
+      res.json(response);
+    } catch (error) {
+      console.error("Export room messages error:", error);
+      res.status(500).json({ success: false, error: "Internal server error" });
+    }
+  },
+);
 
 roomsRouter.get("/:id", authMiddleware, async (req, res) => {
   try {

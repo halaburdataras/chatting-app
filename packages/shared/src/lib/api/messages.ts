@@ -106,3 +106,16 @@ export async function getMessage({
 }): Promise<ApiResponse<{ message: MessageModel }>> {
   return apiClient.get<{ message: MessageModel }>(`/api/v1/messages/${id}`);
 }
+
+export async function getMessagesForExport({
+  roomId,
+}: {
+  roomId: string;
+}): Promise<ApiResponse<{ messages: MessageModel[] }>> {
+  if (!roomId) {
+    return { success: false, error: "Room ID is required" };
+  }
+  return apiClient.get<{ messages: MessageModel[] }>(
+    `/api/v1/rooms/${roomId}/export-messages`,
+  );
+}
