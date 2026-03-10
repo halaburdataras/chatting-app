@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import UserAvatarIcon from '~icons/user-avatar.svg'
 import { useUser } from '@repo/ui/providers/user-provider'
 import Dropdown from '@repo/ui/components/dropdown'
+import Image from 'next/image'
 
 export default function AccountPopover() {
   const { logout, user } = useUser()
@@ -28,10 +29,20 @@ export default function AccountPopover() {
       align="end"
       trigger={
         <button
-          className="cursor-pointer transition-opacity duration-300 outline-none hover:opacity-80"
-          aria-label="Customise options"
+          className="h-9 w-9 cursor-pointer overflow-hidden rounded-full transition-opacity duration-300 outline-none hover:opacity-80"
+          aria-label="Open account options"
         >
-          <UserAvatarIcon className="size-8 min-w-8 text-slate-500" />
+          {user?.avatar ? (
+            <Image
+              src={user.avatar}
+              alt="Avatar"
+              width={36}
+              height={36}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <UserAvatarIcon className="size-8 min-w-8 text-slate-500" />
+          )}
         </button>
       }
     >

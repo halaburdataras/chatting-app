@@ -35,7 +35,7 @@ export function Form<T extends FieldValues>({
 }: FormProps<T>) {
   const methods = useForm<T>({
     resolver: zodResolver(
-      schema as never,
+      schema as never
     ) as import("react-hook-form").Resolver<T>,
     defaultValues,
   });
@@ -104,7 +104,7 @@ export function FormField({
                 field.onChange(
                   typeof e === "string"
                     ? e
-                    : ((e?.target as HTMLInputElement)?.value ?? e),
+                    : ((e?.target as HTMLInputElement)?.value ?? e)
                 )
               }
               onBlur={field.onBlur}
@@ -132,7 +132,7 @@ type InputProps = {
   value?: string;
   id?: string;
   onChange?: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string
   ) => void;
   onBlur?: () => void;
   options?: { label: string; value: string }[];
@@ -160,7 +160,7 @@ export const Input = forwardRef(
       id,
       textareaProps,
     }: InputProps,
-    ref: ForwardedRef<HTMLTextAreaElement | HTMLInputElement>,
+    ref: ForwardedRef<HTMLTextAreaElement | HTMLInputElement>
   ) => {
     const sharedProps = {
       id,
@@ -186,7 +186,7 @@ export const Input = forwardRef(
               variant="outline"
               className={cn(
                 "min-h-13.5 w-full justify-between text-sm font-medium",
-                !!value && "text-slate-900",
+                !!value && "text-slate-900"
               )}
             >
               {currentLabel}
@@ -210,7 +210,7 @@ export const Input = forwardRef(
                 variant="icon"
                 className={cn(
                   "min-h-13.5 min-w-13.5 text-sm font-medium",
-                  !!value && "text-slate-900",
+                  !!value && "text-slate-900"
                 )}
               >
                 <span
@@ -231,7 +231,7 @@ export const Input = forwardRef(
             className="text-sm font-medium"
             onClick={() =>
               onChange?.(
-                `#${(Math.floor(Math.random() * 0xffffff) | 0x0f0f0f).toString(16)}`,
+                `#${(Math.floor(Math.random() * 0xffffff) | 0x0f0f0f).toString(16)}`
               )
             }
           >
@@ -250,7 +250,7 @@ export const Input = forwardRef(
           className={cn(
             inputClassName,
             className,
-            isError && errorInputClassName,
+            isError && errorInputClassName
           )}
         />
       );
@@ -264,11 +264,11 @@ export const Input = forwardRef(
         className={cn(
           inputClassName,
           className,
-          isError && errorInputClassName,
+          isError && errorInputClassName
         )}
       />
     );
-  },
+  }
 );
 
 Input.displayName = "Input";
@@ -322,7 +322,7 @@ export function FormSubmit({
           <span
             className={cn(
               "transition-opacity duration-200",
-              loading && "opacity-0",
+              loading && "opacity-0"
             )}
           >
             {children}
@@ -330,7 +330,7 @@ export function FormSubmit({
           <span
             className={cn(
               "absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200",
-              loading && "opacity-100",
+              loading && "opacity-100"
             )}
           >
             <IconLoading className="h-4 w-4 animate-spin" />

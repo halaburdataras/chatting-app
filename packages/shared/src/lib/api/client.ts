@@ -14,7 +14,7 @@ class ApiClient {
    */
   async get<T>(
     endpoint: string,
-    options?: RequestInit,
+    options?: RequestInit
   ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       ...options,
@@ -29,7 +29,7 @@ class ApiClient {
   async post<T>(
     endpoint: string,
     data?: unknown,
-    options?: RequestInit,
+    options?: RequestInit
   ): Promise<ApiResponse<T>> {
     const isFormData = data instanceof FormData;
 
@@ -51,7 +51,7 @@ class ApiClient {
   async put<T>(
     endpoint: string,
     data?: unknown,
-    options?: RequestInit,
+    options?: RequestInit
   ): Promise<ApiResponse<T>> {
     const isFormData = data instanceof FormData;
 
@@ -71,7 +71,7 @@ class ApiClient {
    */
   async delete<T>(
     endpoint: string,
-    options?: RequestInit,
+    options?: RequestInit
   ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       ...options,
@@ -87,7 +87,7 @@ class ApiClient {
 
     const cookies = document.cookie.split(";");
     const tokenCookie = cookies.find((cookie) =>
-      cookie.trim().startsWith("auth_token="),
+      cookie.trim().startsWith("auth_token=")
     );
 
     if (!tokenCookie) return null;
@@ -113,7 +113,7 @@ class ApiClient {
    */
   protected async request<T>(
     endpoint: string,
-    options: RequestInit = {},
+    options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseUrl}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`;
 

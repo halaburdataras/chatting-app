@@ -34,7 +34,7 @@ export default function Dropdown({
         <DropdownMenu.Content
           className={cn(
             "data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade data-[side=right]:animate-slideLeftAndFade data-[side=top]:animate-slideDownAndFade z-[999] min-w-[220px] rounded-md bg-white p-[5px] shadow-md will-change-[opacity,transform]",
-            className,
+            className
           )}
           sideOffset={5}
           align={align}
@@ -53,7 +53,7 @@ export default function Dropdown({
                     "bg-transparent hover:bg-slate-400/10",
                   item.variant === "error" &&
                     "bg-transparent text-red-500 hover:bg-red-400/10",
-                  item.disabled && "cursor-not-allowed opacity-50",
+                  item.disabled && "cursor-not-allowed opacity-50"
                 )}
               >
                 {item.icon}

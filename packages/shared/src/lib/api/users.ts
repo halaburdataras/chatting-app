@@ -36,7 +36,7 @@ export async function getPaginatedUsers({
   queryParams.append("pageSize", pageSize?.toString() || "10");
 
   return apiClient.get<PaginatedResponse<UserModel>>(
-    `/api/v1/users?${queryParams.toString()}`,
+    `/api/v1/users?${queryParams.toString()}`
   );
 }
 
@@ -75,7 +75,7 @@ export async function updateUser({
 }): Promise<ApiResponse<{ user: UserModel }>> {
   const formData = new FormData();
   formData.append("username", data.username);
-  formData.append("role", data.role);
+  formData.append("role", data.role || Role.USER);
   formData.append("color", data.color);
   if (data.avatar || data.avatar === null) {
     formData.append("avatar", data.avatar as File);

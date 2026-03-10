@@ -35,7 +35,7 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     exposedHeaders: ["Content-Type"],
-  }),
+  })
 );
 
 app.use(express.json()); // parse json body

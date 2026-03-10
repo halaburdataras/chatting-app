@@ -5,7 +5,7 @@ import { forwardRef } from "react";
 type ButtonProps = {
   children: React.ReactNode;
   onClick?: (
-    e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement | HTMLElement>,
+    e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement | HTMLElement>
   ) => void;
   type?: "button" | "submit" | "reset";
   className?: string;
@@ -37,7 +37,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       type = "button",
       ...props
     },
-    ref,
+    ref
   ) => {
     const Component = href ? Link : "button";
     return (
@@ -61,7 +61,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           variant === "outline" &&
             "border border-gray-400/20 bg-transparent text-slate-400 transition-colors duration-200 hover:border-slate-900 data-[disabled=true]:hover:border-gray-400/20",
           disabled && "cursor-not-allowed opacity-50",
-          className,
+          className
         )}
         disabled={disabled}
         data-disabled={disabled}
@@ -73,7 +73,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {icon && iconPosition === "right" && icon}
       </Component>
     );
-  },
+  }
 );
 
 Button.displayName = "Button";

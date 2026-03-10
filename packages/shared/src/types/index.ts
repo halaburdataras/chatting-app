@@ -30,7 +30,7 @@ export interface CreateUserModel {
 
 export interface UpdateUserModel {
   username: string;
-  role: Role;
+  role?: Role;
   color: string;
   avatar: File | null | undefined;
 }

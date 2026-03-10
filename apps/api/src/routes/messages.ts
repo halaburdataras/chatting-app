@@ -25,7 +25,7 @@ messagesRouter.get("/", authMiddleware, async (req, res) => {
 
     const { page, pageSize } = normalizePagination(
       Number(req.query.page),
-      Number(req.query.pageSize),
+      Number(req.query.pageSize)
     );
 
     const search = req.query.search as string | undefined;
@@ -136,7 +136,7 @@ messagesRouter.post("/", authMiddleware, uploadImages, async (req, res) => {
             } else {
               reject(new Error("Upload failed: No result from Cloudinary"));
             }
-          },
+          }
         );
 
         // Write file buffer to upload stream

@@ -34,7 +34,7 @@ export async function getCurrentUser(): Promise<
  * Login user
  */
 export async function login(
-  credentials: LoginRequest,
+  credentials: LoginRequest
 ): Promise<ApiResponse<LoginResponse>> {
   return apiClient.post<LoginResponse>("/api/v1/auth/login", credentials);
 }

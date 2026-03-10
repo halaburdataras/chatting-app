@@ -43,7 +43,7 @@ export default function AvatarInput({
       const rejection = fileRejections[0];
       showToast(
         rejection?.errors[0]?.message || "File is invalid",
-        ToastType.ERROR,
+        ToastType.ERROR
       );
     },
   });
@@ -66,14 +66,14 @@ export default function AvatarInput({
   }, [initialImage, fallbackImage]);
 
   return (
-    <div className="flex gap-4 items-center">
+    <div className="flex items-center gap-4">
       <div
         {...rootProps}
         className={cn(
-          "border rounded-full border-white overflow-hidden transition-colors duration-200 w-[100px] h-[100px] cursor-pointer hover:border-slate-700",
+          "h-[100px] w-[100px] cursor-pointer overflow-hidden rounded-full border border-white transition-colors duration-200 hover:border-slate-700",
           isDragActive && "border-blue-400",
           isDragAccept && "border-green-400",
-          isDragReject && "border-red-400",
+          isDragReject && "border-red-400"
         )}
       >
         <input {...getInputProps()} hidden />
@@ -82,11 +82,11 @@ export default function AvatarInput({
           src={imageUrl}
           width={100}
           height={100}
-          className="object-cover w-full h-full"
+          className="h-full w-full object-cover"
         />
       </div>
 
-      <div className="flex-1 grid gap-3">
+      <div className="grid flex-1 gap-3">
         <Button className="w-fit" onClick={rootProps.onClick}>
           Change Image
         </Button>

@@ -10,7 +10,7 @@ const storage = multer.memoryStorage();
 const fileFilter = (
   req: Request,
   file: Express.Multer.File,
-  cb: multer.FileFilterCallback,
+  cb: multer.FileFilterCallback
 ) => {
   const allowedMimes = [
     "image/jpeg",
@@ -25,8 +25,8 @@ const fileFilter = (
   } else {
     cb(
       new Error(
-        "Invalid file type. Only JPEG, PNG, GIF, and WebP images are allowed.",
-      ),
+        "Invalid file type. Only JPEG, PNG, GIF, and WebP images are allowed."
+      )
     );
   }
 };

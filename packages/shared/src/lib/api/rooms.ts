@@ -30,7 +30,7 @@ export async function getPaginatedRooms({
   queryParams.append("pageSize", pageSize?.toString() || "10");
 
   return apiClient.get<PaginatedResponse<RoomModel>>(
-    `/api/v1/rooms?${queryParams.toString()}`,
+    `/api/v1/rooms?${queryParams.toString()}`
   );
 }
 

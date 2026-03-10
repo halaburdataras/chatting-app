@@ -41,7 +41,7 @@ export default function UserProvider({
       setError(
         error instanceof Error
           ? error.message
-          : "An error occurred while fetching user",
+          : "An error occurred while fetching user"
       );
     } finally {
       setLoading(false);
@@ -73,7 +73,7 @@ export default function UserProvider({
       fetchUser,
       logout,
     }),
-    [user, loading, error, fetchUser, logout],
+    [user, loading, error, fetchUser, logout]
   );
 
   return <UserContext.Provider value={values}>{children}</UserContext.Provider>;

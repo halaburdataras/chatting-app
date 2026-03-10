@@ -37,7 +37,7 @@ async function uploadAvatarToCloudinary(avatar: Express.Multer.File) {
         } else {
           reject(new Error("Upload failed: No result from Cloudinary"));
         }
-      },
+      }
     );
 
     // Write file buffer to upload stream
@@ -55,6 +55,9 @@ usersRouter.get("/current-user", authMiddleware, async (req, res) => {
         username: true,
         role: true,
         color: true,
+        avatar: true,
+        createdAt: true,
+        updatedAt: true,
       },
     });
     if (!user) {
@@ -77,7 +80,7 @@ usersRouter.get("/", adminRoleMiddleware, async (req, res, next) => {
   try {
     const { page, pageSize } = normalizePagination(
       Number(req.query.page),
-      Number(req.query.pageSize),
+      Number(req.query.pageSize)
     );
     const search = req.query.search as string | undefined;
     const role = req.query.role as string | undefined;
@@ -102,6 +105,16 @@ usersRouter.get("/", adminRoleMiddleware, async (req, res, next) => {
         take: pageSize,
         orderBy: {
           createdAt: "desc",
+        },
+        select: {
+          id: true,
+          email: true,
+          username: true,
+          role: true,
+          color: true,
+          avatar: true,
+          createdAt: true,
+          updatedAt: true,
         },
       }),
       prisma.user.count({ where }),
@@ -137,6 +150,16 @@ usersRouter.get("/:id", adminRoleMiddleware, async (req, res) => {
 
     const user = await prisma.user.findUnique({
       where: { id: id as string },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        role: true,
+        color: true,
+        avatar: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
 
     if (!user) {
@@ -206,6 +229,9 @@ usersRouter.post("/", adminRoleMiddleware, uploadAvatar, async (req, res) => {
         role,
         color,
         avatar: uploadResult?.secure_url || null,
+      },
+      select: {
+        id: true,
       },
     });
 
@@ -282,6 +308,9 @@ usersRouter.put("/:id", adminRoleMiddleware, uploadAvatar, async (req, res) => {
           avatar || avatarFromBody === null || avatarFromBody === "null"
             ? uploadResult?.secure_url || null
             : undefined,
+      },
+      select: {
+        id: true,
       },
     });
 

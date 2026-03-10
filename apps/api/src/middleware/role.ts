@@ -10,7 +10,7 @@ const ALLOWED_ROLES: Role[] = [Role.ADMIN, Role.SUPER_ADMIN];
 export const adminRoleMiddleware = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   try {
     const authHeader = req.headers.authorization;
@@ -66,7 +66,7 @@ export const adminRoleMiddleware = async (
 export const superAdminRoleMiddleware = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   try {
     const authHeader = req.headers.authorization;

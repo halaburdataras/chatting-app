@@ -49,7 +49,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
         setIsConnected(true);
       }
     },
-    [socket],
+    [socket]
   );
 
   const values = useMemo(
@@ -58,7 +58,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
       connect,
       isConnected,
     }),
-    [socket, connect, isConnected],
+    [socket, connect, isConnected]
   );
 
   return (

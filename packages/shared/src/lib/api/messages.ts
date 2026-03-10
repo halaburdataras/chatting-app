@@ -40,7 +40,7 @@ export async function getPaginatedMessages({
   queryParams.append("roomId", roomId);
 
   return apiClient.get<PaginatedResponse<MessageModel>>(
-    `/api/v1/messages?${queryParams.toString()}`,
+    `/api/v1/messages?${queryParams.toString()}`
   );
 }
 
@@ -74,7 +74,7 @@ export async function createMessage({
 
   return apiClient.post<{ message: MessageModel }>(
     `/api/v1/messages`,
-    formData,
+    formData
   );
 }
 
@@ -95,7 +95,7 @@ export async function updateMessage({
 }): Promise<ApiResponse<{ message: MessageModel }>> {
   return apiClient.put<{ message: MessageModel }>(
     `/api/v1/messages/${id}`,
-    data,
+    data
   );
 }
 
@@ -116,6 +116,6 @@ export async function getMessagesForExport({
     return { success: false, error: "Room ID is required" };
   }
   return apiClient.get<{ messages: MessageModel[] }>(
-    `/api/v1/rooms/${roomId}/export-messages`,
+    `/api/v1/rooms/${roomId}/export-messages`
   );
 }

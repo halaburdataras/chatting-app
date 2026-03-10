@@ -51,7 +51,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         setType(toastType);
       }, 100);
     },
-    [],
+    []
   );
 
   return (
@@ -68,7 +68,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             type === ToastType.WARNING &&
               "border-yellow-500 bg-yellow-50 text-yellow-500",
             type === ToastType.INFO &&
-              "border-blue-500 bg-blue-50 text-blue-500",
+              "border-blue-500 bg-blue-50 text-blue-500"
           )}
           open={open}
           onOpenChange={setOpen}

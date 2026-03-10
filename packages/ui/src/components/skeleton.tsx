@@ -5,7 +5,7 @@ export default function Skeleton({ className }: { className?: string }) {
     <div
       className={cn(
         "h-5 w-full animate-pulse rounded-sm bg-gray-200",
-        className,
+        className
       )}
     />
   );

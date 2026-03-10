@@ -38,7 +38,7 @@ async function uploadRoomAvatarToCloudinary(avatar: Express.Multer.File) {
         } else {
           reject(new Error("Upload failed: No result from Cloudinary"));
         }
-      },
+      }
     );
 
     // Write file buffer to upload stream
@@ -50,7 +50,7 @@ roomsRouter.get("/", authMiddleware, async (req, res) => {
   try {
     const { page, pageSize } = normalizePagination(
       Number(req.query.page),
-      Number(req.query.pageSize || 10),
+      Number(req.query.pageSize || 10)
     );
 
     const search = req.query.search as string | undefined;
@@ -174,7 +174,7 @@ roomsRouter.get(
       console.error("Export room messages error:", error);
       res.status(500).json({ success: false, error: "Internal server error" });
     }
-  },
+  }
 );
 
 roomsRouter.get("/:id", authMiddleware, async (req, res) => {

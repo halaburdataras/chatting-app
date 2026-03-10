@@ -11,7 +11,7 @@ export function getAuthToken(): string | null {
 
   const cookies = document.cookie.split(";");
   const tokenCookie = cookies.find((cookie) =>
-    cookie.trim().startsWith(`${AUTH_TOKEN_COOKIE_KEY}=`),
+    cookie.trim().startsWith(`${AUTH_TOKEN_COOKIE_KEY}=`)
   );
 
   if (!tokenCookie) return null;

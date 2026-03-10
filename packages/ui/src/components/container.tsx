@@ -15,6 +15,6 @@ export default function Container({
   return createElement(
     as,
     { className: cn("container mx-auto px-10 w-full", className) },
-    children,
+    children
   );
 }
