@@ -18,7 +18,7 @@ import { useToast } from '@repo/ui/providers/toast-provider'
 import { useUser } from '@repo/ui/providers/user-provider'
 import { ToastType } from '@repo/ui/types/index'
 import Filters from './filters'
-import PageHero from '~components/page-hero'
+import PageHero from '@repo/ui/components/page-hero'
 import PlusIcon from '~icons/plus.svg'
 import Image from 'next/image'
 

@@ -30,7 +30,7 @@ export interface CreateUserModel {
 
 export interface UpdateUserModel {
   username: string;
-  role?: Role;
+  role: Role;
   color: string;
   avatar: File | null | undefined;
 }
@@ -40,7 +40,7 @@ export type MessageModel = {
   content: string | null;
   attachments: string[];
   createdAt: Date;
-  user: Pick<UserModel, "id" | "username" | "color">;
+  user: Pick<UserModel, "id" | "username" | "color" | "avatar">;
   roomId: string;
   userId: string;
 };

@@ -41,14 +41,24 @@ export default function ChatMessage({
     >
       <div
         className={cn(
-          'flex size-8 items-center justify-center rounded-full',
+          'flex size-8 items-center justify-center rounded-full shrink-0',
           isCurrentUser ? 'bg-emerald-100' : 'bg-gray-100',
           (isMiddlePerUser || isLastPerUser) && 'opacity-0'
         )}
       >
+
+        {message.user.avatar ? (
+          <Image
+            src={message.user.avatar}
+            alt="Avatar"
+            width={32}
+            height={32}
+            className="object-cover w-full h-full rounded-full"
+          />
+        ) : (
         <p className="text-sm font-semibold">
           {username?.charAt(0).toUpperCase() || 'A'}
-        </p>
+        </p>)}
       </div>
 
       <div

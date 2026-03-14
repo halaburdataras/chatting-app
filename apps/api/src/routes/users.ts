@@ -247,8 +247,6 @@ usersRouter.put("/:id", adminRoleMiddleware, uploadAvatar, async (req, res) => {
     const { id } = req.params;
     const { email, username, avatar: avatarFromBody, role, color } = req.body;
 
-    console.log({ avatarFromBody });
-
     const avatar = req.file as Express.Multer.File;
 
     if (!id) {
@@ -302,7 +300,7 @@ usersRouter.put("/:id", adminRoleMiddleware, uploadAvatar, async (req, res) => {
       data: {
         email,
         username,
-        role,
+        role: role || currentUser?.role || Role.USER,
         color,
         avatar:
           avatar || avatarFromBody === null || avatarFromBody === "null"

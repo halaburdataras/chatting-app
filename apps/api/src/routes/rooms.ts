@@ -54,6 +54,7 @@ roomsRouter.get("/", authMiddleware, async (req, res) => {
     );
 
     const search = req.query.search as string | undefined;
+    const withLastMessage = req.query.withLastMessage as string | undefined;
 
     const where: any = {};
 
@@ -82,24 +83,28 @@ roomsRouter.get("/", authMiddleware, async (req, res) => {
               color: true,
             },
           },
-          messages: {
-            take: 1,
-            select: {
-              attachments: true,
-              content: true,
-              createdAt: true,
-              id: true,
-              userId: true,
-              user: {
-                select: {
-                  id: true,
-                  username: true,
-                  color: true,
-                  avatar: true,
-                },
-              },
-            },
-          },
+          messages:
+            withLastMessage === "true"
+              ? {
+                  take: 1,
+                  orderBy: { createdAt: "desc" },
+                  select: {
+                    attachments: true,
+                    content: true,
+                    createdAt: true,
+                    id: true,
+                    userId: true,
+                    user: {
+                      select: {
+                        id: true,
+                        username: true,
+                        color: true,
+                        avatar: true,
+                      },
+                    },
+                  },
+                }
+              : false,
         },
       }),
       prisma.room.count({ where }),

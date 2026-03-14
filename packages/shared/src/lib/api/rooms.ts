@@ -10,6 +10,7 @@ import { apiClient } from "./client";
 
 interface GetPaginatedRoomsParams extends PaginationParams {
   search?: string;
+  withLastMessage?: boolean;
 }
 
 /**
@@ -19,6 +20,7 @@ export async function getPaginatedRooms({
   page,
   pageSize,
   search,
+  withLastMessage,
 }: GetPaginatedRoomsParams): Promise<
   ApiResponse<PaginatedResponse<RoomModel>>
 > {
@@ -28,7 +30,9 @@ export async function getPaginatedRooms({
   }
   queryParams.append("page", page?.toString() || "1");
   queryParams.append("pageSize", pageSize?.toString() || "10");
-
+  if (withLastMessage) {
+    queryParams.append("withLastMessage", withLastMessage.toString());
+  }
   return apiClient.get<PaginatedResponse<RoomModel>>(
     `/api/v1/rooms?${queryParams.toString()}`
   );

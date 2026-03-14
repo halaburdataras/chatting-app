@@ -1,11 +1,11 @@
-import { cn } from '@repo/shared/utils'
+import { cn } from "@repo/shared/utils";
 
 type PageSectionProps = {
-  title: string
-  description?: string
-  children: React.ReactNode
-  className?: string
-}
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+  className?: string;
+};
 
 export default function PageSection({
   title,
@@ -14,7 +14,7 @@ export default function PageSection({
   className,
 }: PageSectionProps) {
   return (
-    <section className={cn('mt-6 grid grid-cols-[1fr_1.5fr] gap-6', className)}>
+    <section className={cn("mt-6 grid grid-cols-[1fr_1.5fr] gap-6", className)}>
       <div>
         <h2 className="text-lg font-bold">{title}</h2>
         {description && (
@@ -26,5 +26,5 @@ export default function PageSection({
 
       <div className="shadow-card overflow-hidden p-6">{children}</div>
     </section>
-  )
+  );
 }

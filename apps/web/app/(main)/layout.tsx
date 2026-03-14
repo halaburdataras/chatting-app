@@ -1,3 +1,4 @@
+import Header from '~components/header'
 import { ChatProvider } from '~providers/chat/chat-context'
 
 export default function MainLayout({
@@ -5,5 +6,10 @@ export default function MainLayout({
 }: {
   children: React.ReactNode
 }) {
-  return <ChatProvider>{children}</ChatProvider>
+  return (
+    <ChatProvider>
+      <Header />
+      <div className="mt-16">{children}</div>
+    </ChatProvider>
+  )
 }

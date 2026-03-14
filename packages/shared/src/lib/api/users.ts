@@ -75,7 +75,7 @@ export async function updateUser({
 }): Promise<ApiResponse<{ user: UserModel }>> {
   const formData = new FormData();
   formData.append("username", data.username);
-  formData.append("role", data.role || Role.USER);
+  formData.append("role", data.role);
   formData.append("color", data.color);
   if (data.avatar || data.avatar === null) {
     formData.append("avatar", data.avatar as File);

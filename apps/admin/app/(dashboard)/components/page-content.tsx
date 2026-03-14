@@ -1,7 +1,7 @@
 'use client'
 
 import Container from '@repo/ui/components/container'
-import PageHero from '~components/page-hero'
+import PageHero from '@repo/ui/components/page-hero'
 import { useUser } from '@repo/ui/providers/user-provider'
 import ChartGradientGreenIcon from '~icons/chart-gradient-green.svg'
 import ChartGradientBlueIcon from '~icons/chart-gradient-blue.svg'

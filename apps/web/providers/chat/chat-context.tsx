@@ -146,13 +146,14 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   }, [messages])
 
   const fetchRooms = useCallback(
-    async (page = 1, pageSize = 10, search = '') => {
+    async (page = 1, pageSize = 10, search = '', withLastMessage = false) => {
       setLoadingRooms(true)
       try {
         const response = await getPaginatedRooms({
           page,
           pageSize,
           search,
+          withLastMessage,
         })
         if (response.success && response.data) {
           return response.data.items
@@ -304,7 +305,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const initialRoomsLoad = async () => {
-      const initialRooms = await fetchRooms(1, 10, roomSearchDebounced)
+      const initialRooms = await fetchRooms(1, 10, roomSearchDebounced, true)
       setRooms(initialRooms)
     }
     initialRoomsLoad()
@@ -315,9 +316,13 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     if (socket) {
       socket.on('message', (message: MessageModel) => {
         setMessages((prevMessages) => [...prevMessages, message])
+
+        if(rooms.some(room => room.id === message.roomId)) {
+          setRooms(prevRooms => prevRooms.map(room => room.id === message.roomId ? { ...room, messages: [ message] } : room))
+        }
       })
     }
-  }, [socket])
+  }, [rooms, socket])
 
   useEffect(() => {
     // Clear room selection if esc is pressed

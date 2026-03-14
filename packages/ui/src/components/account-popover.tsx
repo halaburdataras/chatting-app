@@ -1,36 +1,36 @@
-'use client'
+"use client";
 
-import { useMemo } from 'react'
-import UserAvatarIcon from '~icons/user-avatar.svg'
-import { useUser } from '@repo/ui/providers/user-provider'
-import Dropdown from '@repo/ui/components/dropdown'
-import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import { useMemo } from "react";
+import UserAvatarIcon from "../icons/IconUserAvatar";
+import { useUser } from "../providers/user-provider";
+import Dropdown from "./dropdown";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function AccountPopover() {
-  const { logout, user } = useUser()
-  const router = useRouter()
+  const { logout, user } = useUser();
+  const router = useRouter();
 
   const list = useMemo(
     () => [
       {
-        label: 'Settings',
-        dividerPosition: 'top',
+        label: "Settings",
+        dividerPosition: "top",
         onClick: () => {
-          router.push('/settings')
+          router.push("/settings");
         },
       },
       {
-        label: 'Logout',
-        variant: 'error',
-        dividerPosition: 'top',
+        label: "Logout",
+        variant: "error",
+        dividerPosition: "top",
         onClick: () => {
-          logout()
+          logout();
         },
       },
     ],
     [logout, router]
-  )
+  );
 
   return (
     <Dropdown
@@ -60,5 +60,5 @@ export default function AccountPopover() {
         <p className="text-sm text-slate-500">{user?.email}</p>
       </div>
     </Dropdown>
-  )
+  );
 }

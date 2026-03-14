@@ -1,22 +1,22 @@
-'use client'
+"use client";
 
-import Breadcrumbs from './breadcrumbs'
-import Button from '@repo/ui/components/button'
+import Breadcrumbs from "./breadcrumbs";
+import Button from "./button";
 
 type PageHeroProps = {
-  title: string
-  description?: string
+  title: string;
+  description?: string;
   breadcrumbs?: {
-    label: string
-    href: string
-  }[]
+    label: string;
+    href: string;
+  }[];
   actions?: {
-    label: string
-    onClick?: () => void
-    icon?: React.ReactNode
-    href?: string
-  }[]
-}
+    label: string;
+    onClick?: () => void;
+    icon?: React.ReactNode;
+    href?: string;
+  }[];
+};
 
 export default function PageHero({
   title,
@@ -51,5 +51,5 @@ export default function PageHero({
         </div>
       )}
     </section>
-  )
+  );
 }
