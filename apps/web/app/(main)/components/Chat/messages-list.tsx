@@ -51,8 +51,8 @@ export default function MessagesList() {
       {!initLoading &&
         !isEmpty &&
         Object.entries(messagesGroupedByDay).map(([date, messages]) => (
-          <div key={date} className="relative mt-4">
-            <p className="text-center text-xs font-medium text-slate-400 sticky top-0">
+          <div key={date} className="relative mt-4 grid">
+            <p className="sticky top-0 z-1 justify-self-center rounded-[10px] bg-white/50 px-3 py-1 text-center text-xs font-medium text-black backdrop-blur-[5px]">
               {date}
             </p>
             {messages.map((message, index) => (

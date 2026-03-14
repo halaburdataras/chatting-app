@@ -1,4 +1,5 @@
 "use client";
+
 import {
   createContext,
   useEffect,
@@ -12,12 +13,14 @@ import { Socket, io } from "socket.io-client";
 type SocketContextType = {
   socket: Socket | null;
   connect: (authParams: { [key: string]: string }) => void;
+  disconnect: () => void;
   isConnected: boolean;
 };
 
 export const SocketContext = createContext<SocketContextType>({
   socket: null,
   connect: () => {},
+  disconnect: () => {},
   isConnected: false,
 });
 
@@ -30,35 +33,61 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    const socket = io(WS_URL, { autoConnect: false });
+    const socketInstance = io(WS_URL, { autoConnect: false });
 
     if (!isProduction) {
-      socket.onAny((event, ...args) => {
-        console.log(event, args);
+      socketInstance.onAny((event, ...args) => {
+        console.log("[Socket]", event, args);
       });
     }
 
-    setSocket(socket);
+    const onConnect = () => setIsConnected(true);
+    const onDisconnect = () => setIsConnected(false);
+
+    socketInstance.on("connect", onConnect);
+    socketInstance.on("disconnect", onDisconnect);
+    // Sync initial state in case socket reconnects after provider mount
+    if (socketInstance.connected) setIsConnected(true);
+
+    setSocket(socketInstance);
+
+    return () => {
+      socketInstance.off("connect", onConnect);
+      socketInstance.off("disconnect", onDisconnect);
+      socketInstance.disconnect();
+      setSocket(null);
+      setIsConnected(false);
+    };
   }, []);
 
-  const connect = useCallback(
-    (authParams: { [key: string]: string }) => {
-      if (socket) {
-        socket.auth = authParams;
-        socket.connect();
-        setIsConnected(true);
+  const connect = useCallback((authParams: { [key: string]: string }) => {
+    setSocket((current) => {
+      if (current) {
+        current.auth = authParams;
+        current.connect();
       }
-    },
-    [socket]
-  );
+      return current;
+    });
+  }, []);
+
+  const disconnect = useCallback(() => {
+    setSocket((current) => {
+      if (current) {
+        current.disconnect();
+      }
+      return current;
+    });
+    setIsConnected(false);
+  }, []);
 
   const values = useMemo(
     () => ({
       socket,
       connect,
+      disconnect,
       isConnected,
     }),
-    [socket, connect, isConnected]
+    [socket, connect, disconnect, isConnected]
   );
 
   return (

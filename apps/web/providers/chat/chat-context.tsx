@@ -287,6 +287,16 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
         setMessageText('')
         setAttachments([])
         setMessages((prevMessages) => [...prevMessages, newMessage])
+        // Show own message as latest in room list (sender does not receive roomLatestMessage for in-room broadcast)
+        if (currentRoom?.id) {
+          setRooms((prevRooms) =>
+            prevRooms.map((room) =>
+              room.id === currentRoom.id
+                ? { ...room, messages: [newMessage] }
+                : room
+            )
+          )
+        }
 
         setTimeout(() => {
           if (messagesListRef.current) {
@@ -312,17 +322,50 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomSearchDebounced])
 
+  // Join preview rooms so we receive roomLatestMessage for every room in the list (including when more rooms load)
   useEffect(() => {
-    if (socket) {
-      socket.on('message', (message: MessageModel) => {
-        setMessages((prevMessages) => [...prevMessages, message])
+    if (!socket || rooms.length === 0) return
+    const roomIds = rooms.map((r) => r.id)
+    socket.emit('joinRoomPreviews', roomIds)
+  }, [socket, rooms])
 
-        if(rooms.some(room => room.id === message.roomId)) {
-          setRooms(prevRooms => prevRooms.map(room => room.id === message.roomId ? { ...room, messages: [ message] } : room))
-        }
-      })
+  // In-room messages: add to current room messages and update room list preview
+  useEffect(() => {
+    if (!socket) return
+
+    const handleMessage = (message: MessageModel) => {
+      setMessages((prev) => [...prev, message])
+      setRooms((prevRooms) =>
+        prevRooms.some((r) => r.id === message.roomId)
+          ? prevRooms.map((room) =>
+              room.id === message.roomId
+                ? { ...room, messages: [message] }
+                : room
+            )
+          : prevRooms
+      )
     }
-  }, [rooms, socket])
+
+    // Room list only: latest message for any room (no in-room message list update)
+    const handleRoomLatestMessage = (message: MessageModel) => {
+      setRooms((prevRooms) =>
+        prevRooms.some((r) => r.id === message.roomId)
+          ? prevRooms.map((room) =>
+              room.id === message.roomId
+                ? { ...room, messages: [message] }
+                : room
+            )
+          : prevRooms
+      )
+    }
+
+    socket.on('message', handleMessage)
+    socket.on('roomLatestMessage', handleRoomLatestMessage)
+    return () => {
+      socket.off('message', handleMessage)
+      socket.off('roomLatestMessage', handleRoomLatestMessage)
+    }
+  }, [socket])
 
   useEffect(() => {
     // Clear room selection if esc is pressed
