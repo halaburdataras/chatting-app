@@ -5,7 +5,7 @@ import Tag from '~components/tag'
 import TrashIcon from '~icons/trash.svg'
 import XCircleIcon from '@repo/ui/icons/IconXCircle'
 import Dropdown from '@repo/ui/components/dropdown'
-import ChevronDownIcon from '~icons/chevron-down.svg'
+import IconChevronDown from '@repo/ui/icons/IconChevronDown'
 import { cn } from '@repo/shared/utils'
 
 type FiltersState = {
@@ -44,7 +44,7 @@ export default function Filters({
                   ? filters.role.toLowerCase().replaceAll('_', ' ')
                   : 'Role'}
               </span>
-              <ChevronDownIcon className="size-5 min-w-5" />
+              <IconChevronDown className="size-5 min-w-5" />
             </Button>
           }
           list={[

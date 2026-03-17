@@ -6,7 +6,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import Button from '@repo/ui/components/button'
-import ChevronDownIcon from '~icons/chevron-down.svg'
+import IconChevronDown from '@repo/ui/icons/IconChevronDown'
 import Dropdown from '@repo/ui/components/dropdown'
 
 interface TableProps<T extends object> {
@@ -101,7 +101,7 @@ export default function Table<T extends object>({
                     trigger={
                       <Button variant="text" className="group gap-1">
                         {footerData.pageSize}{' '}
-                        <ChevronDownIcon className="size-4 min-w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                        <IconChevronDown className="size-4 min-w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
                       </Button>
                     }
                     list={limitOptions}
@@ -116,7 +116,7 @@ export default function Table<T extends object>({
                     aria-label="Previous page"
                     onClick={footerData.handlePreviousPage}
                   >
-                    <ChevronDownIcon className="size-6 min-w-6 rotate-90" />
+                    <IconChevronDown className="size-6 min-w-6 rotate-90" />
                   </Button>
                   <Button
                     variant="icon"
@@ -124,7 +124,7 @@ export default function Table<T extends object>({
                     aria-label="Next page"
                     onClick={footerData.handleNextPage}
                   >
-                    <ChevronDownIcon className="size-6 min-w-6 rotate-270" />
+                    <IconChevronDown className="size-6 min-w-6 rotate-270" />
                   </Button>
                 </div>
               </td>

@@ -21,6 +21,9 @@ import { useSocket } from '@repo/ui/providers/socket-context'
 import useChatUsers from './use-chat-users'
 
 const MESSAGES_PAGE_SIZE = 20
+const MESSAGE_SEARCH_DEBOUNCE_MS = 500
+const SEARCH_RESULTS_PAGE_SIZE = 100
+const HIGHLIGHT_DURATION_MS = 3000
 
 const DEFAULT_MESSAGES_PAGINATION_OPTIONS = {
   page: 1,
@@ -56,6 +59,19 @@ export type ChatContextType = {
   messagesGroupedByDay: Record<string, MessageModel[]>
   attachments: File[]
   setAttachments: (attachments: File[]) => void
+  // Message search
+  messageSearch: string
+  setMessageSearch: (search: string) => void
+  searchResults: MessageModel[] | null
+  searchResultsLoading: boolean
+  highlightedMessageId: string | null
+  currentSearchResultIndex: number
+  registerMessageRef: (id: string, el: HTMLDivElement | null) => void
+  scrollToMessageId: (id: string) => void
+  goToPreviousSearchResult: () => void
+  goToNextSearchResult: () => void
+  canGoToPreviousSearchResult: boolean
+  canGoToNextSearchResult: boolean
 }
 
 export const ChatContext = createContext<ChatContextType>({
@@ -80,6 +96,18 @@ export const ChatContext = createContext<ChatContextType>({
   messagesGroupedByDay: {},
   attachments: [],
   setAttachments: () => {},
+  messageSearch: '',
+  setMessageSearch: () => {},
+  searchResults: null,
+  searchResultsLoading: false,
+  highlightedMessageId: null,
+  currentSearchResultIndex: 0,
+  registerMessageRef: () => {},
+  scrollToMessageId: () => {},
+  goToPreviousSearchResult: () => {},
+  goToNextSearchResult: () => {},
+  canGoToPreviousSearchResult: false,
+  canGoToNextSearchResult: false,
 })
 
 export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
@@ -119,6 +147,25 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     total: number
     totalPages: number
   }>(DEFAULT_MESSAGES_PAGINATION_OPTIONS)
+
+  // Message search state
+  const [messageSearch, setMessageSearch] = useState<string>('')
+  const messageSearchDebounced = useDebounce(
+    messageSearch,
+    MESSAGE_SEARCH_DEBOUNCE_MS
+  )
+  const [searchResults, setSearchResults] = useState<MessageModel[] | null>(
+    null
+  )
+  const [searchResultsLoading, setSearchResultsLoading] =
+    useState<boolean>(false)
+  const [highlightedMessageId, setHighlightedMessageId] = useState<
+    string | null
+  >(null)
+  const [currentSearchResultIndex, setCurrentSearchResultIndex] =
+    useState<number>(0)
+  const messageRefsMap = useRef(new Map<string, HTMLDivElement>())
+  const highlightTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const parsedMessageHtml = useMemo(() => {
     // find tags @user and replace with <span class="text-primary">username</span>
@@ -205,6 +252,78 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     [showToast]
   )
 
+  const registerMessageRef = useCallback(
+    (id: string, el: HTMLDivElement | null) => {
+      if (el) {
+        messageRefsMap.current.set(id, el)
+      } else {
+        messageRefsMap.current.delete(id)
+      }
+    },
+    []
+  )
+
+  const scrollToMessageId = useCallback((id: string) => {
+    const el = messageRefsMap.current.get(id)
+    el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }, [])
+
+  const searchResultsDisplayOrder = useMemo(() => {
+    if (!searchResults || searchResults.length === 0) return []
+    return orderBy(
+      [...searchResults],
+      (m) => new Date(m.createdAt).getTime(),
+      'asc'
+    )
+  }, [searchResults])
+
+  const goToPreviousSearchResult = useCallback(() => {
+    if (!searchResultsDisplayOrder.length) return
+    const nextIndex = Math.max(currentSearchResultIndex - 1, 0)
+    setCurrentSearchResultIndex(nextIndex)
+    const message = searchResultsDisplayOrder[nextIndex]
+    if (message) {
+      setHighlightedMessageId(message.id)
+      if (highlightTimeoutRef.current) {
+        clearTimeout(highlightTimeoutRef.current)
+      }
+      highlightTimeoutRef.current = setTimeout(() => {
+        setHighlightedMessageId(null)
+        highlightTimeoutRef.current = null
+      }, HIGHLIGHT_DURATION_MS)
+      scrollToMessageId(message.id)
+    }
+  }, [searchResultsDisplayOrder, currentSearchResultIndex, scrollToMessageId])
+
+  const goToNextSearchResult = useCallback(() => {
+    if (!searchResultsDisplayOrder.length) return
+    const nextIndex = Math.min(
+      currentSearchResultIndex + 1,
+      searchResultsDisplayOrder.length - 1
+    )
+    setCurrentSearchResultIndex(nextIndex)
+    const message = searchResultsDisplayOrder[nextIndex]
+    if (message) {
+      setHighlightedMessageId(message.id)
+      if (highlightTimeoutRef.current) {
+        clearTimeout(highlightTimeoutRef.current)
+      }
+      highlightTimeoutRef.current = setTimeout(() => {
+        setHighlightedMessageId(null)
+        highlightTimeoutRef.current = null
+      }, HIGHLIGHT_DURATION_MS)
+      scrollToMessageId(message.id)
+    }
+  }, [searchResultsDisplayOrder, currentSearchResultIndex, scrollToMessageId])
+
+  const canGoToPreviousSearchResult =
+    !!searchResults && searchResults.length > 1 && currentSearchResultIndex > 0
+
+  const canGoToNextSearchResult =
+    !!searchResults &&
+    searchResults.length > 1 &&
+    currentSearchResultIndex < searchResultsDisplayOrder.length - 1
+
   const hasMoreMessages = useMemo(() => {
     return (
       !!messagesPaginationOptions.totalPages &&
@@ -233,6 +352,9 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const handleSelectRoom = useCallback(
     async (room: RoomModel) => {
       setMessages([])
+      setMessageSearch('')
+      setSearchResults(null)
+      setHighlightedMessageId(null)
 
       if (currentRoom) {
         socket?.emit('leaveRoom', currentRoom.id)
@@ -322,7 +444,75 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomSearchDebounced])
 
-  // Join preview rooms so we receive roomLatestMessage for every room in the list (including when more rooms load)
+  useEffect(() => {
+    const term = messageSearchDebounced.trim()
+    if (!currentRoom?.id) {
+      setSearchResults(null)
+      return
+    }
+    if (!term) {
+      setSearchResults(null)
+      setHighlightedMessageId(null)
+      if (highlightTimeoutRef.current) {
+        clearTimeout(highlightTimeoutRef.current)
+        highlightTimeoutRef.current = null
+      }
+      return
+    }
+
+    let cancelled = false
+    setSearchResultsLoading(true)
+    getPaginatedMessages({
+      roomId: currentRoom.id,
+      page: 1,
+      pageSize: SEARCH_RESULTS_PAGE_SIZE,
+      search: term,
+    })
+      .then((response) => {
+        if (cancelled) return
+        if (response.success && response.data) {
+          const items = response.data.items
+          setSearchResults(items)
+          setCurrentSearchResultIndex(items.length > 0 ? items.length - 1 : 0)
+          if (items.length > 0) {
+            const mostRecent = items[0]
+            if (mostRecent) {
+              setHighlightedMessageId(mostRecent.id)
+              if (highlightTimeoutRef.current) {
+                clearTimeout(highlightTimeoutRef.current)
+              }
+              highlightTimeoutRef.current = setTimeout(() => {
+                setHighlightedMessageId(null)
+                highlightTimeoutRef.current = null
+              }, HIGHLIGHT_DURATION_MS)
+            }
+          } else {
+            setHighlightedMessageId(null)
+          }
+        } else {
+          setSearchResults([])
+          setHighlightedMessageId(null)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setSearchResults([])
+          setHighlightedMessageId(null)
+          showToast(
+            'An error occurred while searching messages',
+            ToastType.ERROR
+          )
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setSearchResultsLoading(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [currentRoom?.id, messageSearchDebounced, showToast])
+
   useEffect(() => {
     if (!socket || rooms.length === 0) return
     const roomIds = rooms.map((r) => r.id)
@@ -403,6 +593,18 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       messagesGroupedByDay,
       attachments,
       setAttachments,
+      messageSearch,
+      setMessageSearch,
+      searchResults,
+      searchResultsLoading,
+      highlightedMessageId,
+      currentSearchResultIndex,
+      registerMessageRef,
+      scrollToMessageId,
+      goToPreviousSearchResult,
+      goToNextSearchResult,
+      canGoToPreviousSearchResult,
+      canGoToNextSearchResult,
     }),
     [
       rooms,
@@ -425,6 +627,18 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       messagesGroupedByDay,
       attachments,
       setAttachments,
+      messageSearch,
+      setMessageSearch,
+      searchResults,
+      searchResultsLoading,
+      highlightedMessageId,
+      currentSearchResultIndex,
+      registerMessageRef,
+      scrollToMessageId,
+      goToPreviousSearchResult,
+      goToNextSearchResult,
+      canGoToPreviousSearchResult,
+      canGoToNextSearchResult,
     ]
   )
 

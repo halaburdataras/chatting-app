@@ -1,3 +1,4 @@
+import { forwardRef } from 'react'
 import { MessageModel } from '@repo/shared'
 import { cn, formatDateToLocalTime } from '@repo/shared/utils'
 import Skeleton from '@repo/ui/components/skeleton'
@@ -8,37 +9,39 @@ type ChatMessageProps = {
   message: MessageModel
   previousMessage: MessageModel | null | undefined
   nextMessage: MessageModel | null | undefined
+  isHighlighted?: boolean
 }
 
-export default function ChatMessage({
-  message,
-  previousMessage,
-  nextMessage,
-}: ChatMessageProps) {
-  const { user: currentUser } = useUser()
+const ChatMessage = forwardRef<HTMLDivElement, ChatMessageProps>(
+  (
+    { message, previousMessage, nextMessage, isHighlighted = false },
+    ref
+  ) => {
+    const { user: currentUser } = useUser()
 
-  const isCurrentUser = currentUser?.id === message.userId
+    const isCurrentUser = currentUser?.id === message.userId
 
-  const username = message.user?.username
+    const username = message.user?.username
 
-  const isFirstPerUser =
-    previousMessage?.userId !== message.userId &&
-    nextMessage?.userId === message.userId
-  const isLastPerUser =
-    previousMessage?.userId === message.userId &&
-    nextMessage?.userId !== message.userId
-  const isMiddlePerUser =
-    previousMessage?.userId === message.userId &&
-    nextMessage?.userId === message.userId
+    const isFirstPerUser =
+      previousMessage?.userId !== message.userId &&
+      nextMessage?.userId === message.userId
+    const isLastPerUser =
+      previousMessage?.userId === message.userId &&
+      nextMessage?.userId !== message.userId
+    const isMiddlePerUser =
+      previousMessage?.userId === message.userId &&
+      nextMessage?.userId === message.userId
 
-  return (
-    <div
-      className={cn(
-        'flex items-start gap-4 not-first:mt-4',
-        isCurrentUser && 'flex-row-reverse',
-        (isMiddlePerUser || isLastPerUser) && 'not-first:mt-1'
-      )}
-    >
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          'flex items-start gap-4 not-first:mt-4',
+          isCurrentUser && 'flex-row-reverse',
+          (isMiddlePerUser || isLastPerUser) && 'not-first:mt-1'
+        )}
+      >
       <div
         className={cn(
           'flex size-8 items-center justify-center rounded-full shrink-0',
@@ -88,8 +91,11 @@ export default function ChatMessage({
 
         <div
           className={cn(
-            'rounded-lg bg-gray-100 p-3 text-sm whitespace-pre-line',
+            'rounded-lg p-3 text-sm whitespace-pre-line transition-[box-shadow,background-color] duration-300',
+            !isCurrentUser && 'bg-gray-100',
             isCurrentUser && 'bg-emerald-100',
+            isHighlighted && !isCurrentUser && 'bg-gray-50 ring-2 ring-gray-300/80',
+            isHighlighted && isCurrentUser && 'bg-emerald-200 ring-2 ring-emerald-400/80',
             isMiddlePerUser && isCurrentUser && 'rounded-r-sm',
             isMiddlePerUser && !isCurrentUser && 'rounded-l-sm',
             isLastPerUser && isCurrentUser && 'rounded-tr-sm',
@@ -124,8 +130,13 @@ export default function ChatMessage({
         </div>
       </div>
     </div>
-  )
-}
+    )
+  }
+)
+
+ChatMessage.displayName = 'ChatMessage'
+
+export default ChatMessage
 
 export function ChatMessageSkeleton() {
   return (
