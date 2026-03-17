@@ -14,17 +14,20 @@ enum Role {
 }
 
 model User {
-  id        String    @id @default(uuid(7))
-  username  String    @unique
-  email     String    @unique
-  password  String
-  role      Role      @default(USER)
-  color     String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  messages  Message[]
-  rooms     Room[]
-  avatar    String?
+  id             String    @id @default(uuid(7))
+  username       String    @unique
+  email          String    @unique
+  password       String
+  role           Role      @default(USER)
+  color          String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  messages       Message[]
+  rooms          Room[]
+  avatar         String?
+  isBlocked      Boolean   @default(false)
+  isSuspended    Boolean   @default(false)
+  suspendedUntil DateTime?
 }
 
 model Message {
