@@ -101,6 +101,47 @@ messagesRouter.post("/", authMiddleware, uploadImages, async (req, res) => {
       });
     }
 
+    const currentUser = req.user;
+    if (!currentUser?.userId) {
+      return res.status(401).json({
+        success: false,
+        error: "Unauthorized",
+      });
+    }
+
+    const sender = await prisma.user.findUnique({
+      where: { id: currentUser.userId },
+      select: { isBlocked: true, isSuspended: true, suspendedUntil: true },
+    });
+
+    if (!sender) {
+      return res.status(401).json({
+        success: false,
+        error: "User not found",
+      });
+    }
+
+    if (sender.isBlocked) {
+      return res.status(403).json({
+        success: false,
+        error: "You cannot send messages: your account is blocked",
+      });
+    }
+
+    const now = new Date();
+    const isEffectivelySuspended =
+      sender.isSuspended &&
+      (sender.suspendedUntil === null || sender.suspendedUntil > now);
+
+    if (isEffectivelySuspended) {
+      return res.status(403).json({
+        success: false,
+        error: sender.suspendedUntil
+          ? `You cannot send messages: your account is suspended until ${sender.suspendedUntil.toISOString()}`
+          : "You cannot send messages: your account is suspended",
+      });
+    }
+
     const room = await prisma.room.findUnique({
       where: { id: roomId as string },
       select: {
@@ -114,8 +155,6 @@ messagesRouter.post("/", authMiddleware, uploadImages, async (req, res) => {
         error: "Room not found",
       });
     }
-
-    const currentUser = req.user;
 
     const uploadPromises = attachments.map((file, index) => {
       return new Promise<{ secure_url: string }>((resolve, reject) => {

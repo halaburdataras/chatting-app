@@ -319,6 +319,315 @@ usersRouter.put("/:id", adminRoleMiddleware, uploadAvatar, async (req, res) => {
   }
 });
 
+usersRouter.put("/:id/block", adminRoleMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        error: "User ID is required",
+      });
+    }
+
+    const userToBlock = await prisma.user.findUnique({
+      where: { id: id as string },
+      select: {
+        id: true,
+        isBlocked: true,
+        role: true,
+      },
+    });
+
+    if (!userToBlock) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found",
+      });
+    }
+
+    if (userToBlock.isBlocked) {
+      return res.status(400).json({
+        success: false,
+        error: "User is already blocked",
+      });
+    }
+
+    const currentUser = req.user;
+
+    if (userToBlock.id === currentUser?.userId) {
+      return res.status(400).json({
+        success: false,
+        error: "You cannot block yourself",
+      });
+    }
+
+    if (
+      userToBlock.role === Role.SUPER_ADMIN &&
+      currentUser?.role !== Role.SUPER_ADMIN
+    ) {
+      return res.status(403).json({
+        success: false,
+        error: "Permission denied",
+      });
+    }
+
+    const user = await prisma.user.update({
+      where: { id: id as string },
+      data: {
+        isBlocked: true,
+      },
+      select: {
+        id: true,
+        isBlocked: true,
+      },
+    });
+
+    res.json({ success: true, data: { user } });
+  } catch (error) {
+    console.error("Block user error:", error);
+    res.status(500).json({ success: false, error: "Internal server error" });
+  }
+});
+
+usersRouter.put("/:id/unblock", adminRoleMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        error: "User ID is required",
+      });
+    }
+
+    const userToUnblock = await prisma.user.findUnique({
+      where: { id: id as string },
+      select: {
+        id: true,
+        isBlocked: true,
+        role: true,
+      },
+    });
+
+    if (!userToUnblock) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found",
+      });
+    }
+
+    if (!userToUnblock.isBlocked) {
+      return res.status(400).json({
+        success: false,
+        error: "User is not blocked",
+      });
+    }
+
+    const currentUser = req.user;
+
+    if (userToUnblock.id === currentUser?.userId) {
+      return res.status(400).json({
+        success: false,
+        error: "You cannot unblock yourself",
+      });
+    }
+
+    if (
+      userToUnblock.role === Role.SUPER_ADMIN &&
+      currentUser?.role !== Role.SUPER_ADMIN
+    ) {
+      return res.status(403).json({
+        success: false,
+        error: "Permission denied",
+      });
+    }
+
+    const user = await prisma.user.update({
+      where: { id: id as string },
+      data: {
+        isBlocked: false,
+      },
+      select: {
+        id: true,
+        isBlocked: true,
+      },
+    });
+
+    res.json({ success: true, data: { user } });
+  } catch (error) {
+    console.error("Unblock user error:", error);
+    res.status(500).json({ success: false, error: "Internal server error" });
+  }
+});
+
+usersRouter.put("/:id/suspend", adminRoleMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const suspendUntilRaw = req.body?.suspendUntilDate;
+    if (!id) {
+      return res
+        .status(400)
+        .json({ success: false, error: "User ID is required" });
+    }
+
+    if (typeof suspendUntilRaw !== "string") {
+      return res.status(400).json({
+        success: false,
+        error: "suspendUntilDate must be an ISO string",
+      });
+    }
+
+    const suspendUntil = new Date(suspendUntilRaw);
+    if (Number.isNaN(suspendUntil.getTime())) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Invalid suspend date" });
+    }
+
+    const now = Date.now();
+    if (suspendUntil.getTime() <= now) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Suspend date must be in the future" });
+    }
+
+    const userToSuspend = await prisma.user.findUnique({
+      where: { id: id as string },
+      select: {
+        id: true,
+        isSuspended: true,
+        role: true,
+      },
+    });
+
+    if (!userToSuspend) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found",
+      });
+    }
+
+    if (userToSuspend.isSuspended) {
+      return res.status(400).json({
+        success: false,
+        error: "User is already suspended",
+      });
+    }
+
+    const currentUser = req.user;
+
+    if (userToSuspend.id === currentUser?.userId) {
+      return res.status(400).json({
+        success: false,
+        error: "You cannot suspend yourself",
+      });
+    }
+
+    if (
+      userToSuspend.role === Role.SUPER_ADMIN &&
+      currentUser?.role !== Role.SUPER_ADMIN
+    ) {
+      return res.status(403).json({
+        success: false,
+        error: "Permission denied",
+      });
+    }
+
+    const user = await prisma.user.update({
+      where: { id: id as string },
+      data: {
+        isSuspended: true,
+        suspendedUntil: suspendUntil,
+      },
+      select: { id: true, isSuspended: true, suspendedUntil: true },
+    });
+
+    res.json({
+      success: true,
+      data: {
+        user: { ...user, suspendedUntil: user.suspendedUntil?.toISOString() },
+      },
+    });
+  } catch (error) {
+    console.error("Suspend user error:", error);
+    res.status(500).json({ success: false, error: "Internal server error" });
+  }
+});
+
+usersRouter.put("/:id/unsuspend", adminRoleMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        error: "User ID is required",
+      });
+    }
+
+    const userToUnsuspend = await prisma.user.findUnique({
+      where: { id: id as string },
+      select: {
+        id: true,
+        isSuspended: true,
+        role: true,
+      },
+    });
+
+    if (!userToUnsuspend) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found",
+      });
+    }
+
+    if (!userToUnsuspend.isSuspended) {
+      return res.status(400).json({
+        success: false,
+        error: "User is not suspended",
+      });
+    }
+
+    const currentUser = req.user;
+
+    if (userToUnsuspend.id === currentUser?.userId) {
+      return res.status(400).json({
+        success: false,
+        error: "You cannot unsuspend yourself",
+      });
+    }
+
+    if (
+      userToUnsuspend.role === Role.SUPER_ADMIN &&
+      currentUser?.role !== Role.SUPER_ADMIN
+    ) {
+      return res.status(403).json({
+        success: false,
+        error: "Permission denied",
+      });
+    }
+
+    const user = await prisma.user.update({
+      where: { id: id as string },
+      data: {
+        isSuspended: false,
+        suspendedUntil: null,
+      },
+      select: {
+        id: true,
+        isSuspended: true,
+        suspendedUntil: true,
+      },
+    });
+
+    res.json({ success: true, data: { user } });
+  } catch (error) {
+    console.error("Unsuspend user error:", error);
+    res.status(500).json({ success: false, error: "Internal server error" });
+  }
+});
+
 usersRouter.delete("/:id", superAdminRoleMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
